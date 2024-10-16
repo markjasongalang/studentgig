@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+:root {
+    --primary-color: #243642;
+    --secondary-color: #387478;
+    --tertiary-color: #629584;
+    --extra-color: #E2F1E7;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, input, button {
+    /* Weight: 100 – 1000 */
+    font-family: "DM Sans", serif;
+    font-optical-sizing: auto;
+}
+
+::selection {
+    color: var(--extra-color);
+    background-color: var(--primary-color);
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;
+}
+
+nav .website-logo {
+    /* to remove extra space below <img> */
+    display: block;
+    width: 120px;
+}
+
+nav ul {
+    list-style-type: none;
+}
+
+nav li {
+    display: inline-block;
+    margin-left: 5px;
+}
+
+nav li a {
+    text-decoration: none;
+    padding: 5px 15px;
+    color: var(--secondary-color);
+    background-color: white;
+    border-radius: 60px;
+    transition: color 0.3s ease, background-color 0.3s;
+}
+
+nav li a:hover,
+nav .active {
+    color: var(--extra-color);
+    background-color: var(--secondary-color);
+}
+
+nav .special-link {
+    color: var(--extra-color);
+    background-color: var(--primary-color);
+}
