@@ -13,15 +13,12 @@
     </form>
 
     <div class="gig-list">
-        <a href="#" class="gig-item">
+        <a href="./gig-details?g=" class="gig-item">
             <h3 class="gig-title">English Tutor</h3>
+            <p class="gig-type">Remote</p>
             <div>
                 <p>Payment</p>
                 <p>420 per hour</p>
-            </div>
-            <div>
-                <p>Start</p>
-                <p>Oct 25, 2024</p>
             </div>
             <div>
                 <p>Duration</p>
@@ -36,6 +33,12 @@
     const gigList = document.querySelector('.gig-list');
     for (let i = 0; i < 7; i++) {
         const gigItem = document.querySelector('.gig-item').cloneNode(true);
+        if (i % 2 == 0) {
+            gigItem.querySelector('.gig-type').innerHTML = 'Onsite';
+        }
+        if (i % 3 == 0) {
+            gigItem.querySelector('.gig-type').innerHTML = 'Hybrid';
+        }
         gigList.appendChild(gigItem);
     }
 </script>

@@ -1,0 +1,39 @@
+.inner {
+    display: flex;
+}
+
+.main {
+    flex-basis: 70%;
+    padding-right: 30px;
+}
+
+.main .gig-title-label {
+    display: none;
+}
+
+input[type=text],
+input[type=number], 
+textarea {
+    display: none;
+}
+
+#update-gig-details-form {
+    display: none;
+}
+
+select {
+    display: none !important;
+}
+
+select.show {
+    display: inline-block !important;
+}
+
+.side {
+    flex-basis: 30%;
+}
+
+.side button a {
+    text-decoration: none;
+    color: var(--extra-color);
+}

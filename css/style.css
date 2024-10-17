@@ -78,7 +78,7 @@ nav .special-link {
     margin-top: 15px;
 }
 
-input, select {
+input, select, button {
     width: 100%;
     margin: 7px 0;
     padding: 10px 20px;
@@ -139,9 +139,42 @@ input[type=submit]:hover, button:hover {
     background-color: var(--secondary-color);
 }
 
+.content {
+    margin: 7px 0;
+    line-height: 1.5;
+    font-size: 17px;
+    white-space: pre-wrap;
+}
+
+.outline-btn {
+    background-color: white !important;
+    color: var(--primary-color) m !important;
+    border: 1px solid var(--primary-color) !important;
+}
+
+.outline-btn:hover {
+    border: none !important;
+    background-color: var(--secondary-color) !important;
+    color: var(--extra-color) !important;
+}
+
+.back-btn {
+    width: auto;
+    color: var(--special-gray);
+    background: none;
+    padding: 10px 0;
+    font-size: 15px;
+    color: var(--secondary-color);
+}
+
+.back-btn:hover {
+    background: none;
+    color: var(--primary-color);
+}
+
 /* ---------------------------- SPINNER ---------------------------- */
 #loader {
-    /* display: none; */
+    display: none;
     margin-top: 10px;
 }
 
