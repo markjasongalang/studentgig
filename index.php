@@ -7,7 +7,7 @@
 <div class="container">
     <h1 class="tagline">Your next hire is here! <span>23</span> students are eager for gigs!</h1>
 
-    <form id="search-gig-form">
+    <form id="search-gig-form" method="GET">
         <i class="ri-search-line"></i>
         <input name="search_gig" id="search-gig" type="text" placeholder="Search for a gig...">
     </form>

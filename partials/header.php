@@ -7,7 +7,9 @@
 
         <!-- External CSS -->
         <link rel="stylesheet" href="./css/style.css">
-        <link rel="stylesheet" href="./css/<?php echo $css_file_name; ?>.css">
+        <?php if (isset($css_file_name)) { ?>
+            <link rel="stylesheet" href="./css/<?php echo $css_file_name; ?>.css">
+        <?php } ?>
 
         <!-- Remix Icon -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.min.css" integrity="sha512-MqL4+Io386IOPMKKyplKII0pVW5e+kb+PI/I3N87G3fHIfrgNNsRpzIXEi+0MQC0sR9xZNqZqCYVcC61fL5+Vg==" crossorigin="anonymous" referrerpolicy="no-referrer" />

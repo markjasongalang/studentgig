@@ -1,12 +1,7 @@
-.container {
-    width: 70%;
-    margin: 0 auto;
-    padding: 30px 0;
-}
-
 .tagline {
     text-align: center;
-    font-weight: 400;
+    font-weight: 300;
+    font-size: 35px;
 }
 
 .tagline span {
@@ -16,9 +11,9 @@
 
 #search-gig-form {
     border-radius: 60px;
-    border: 1px solid #d6d6d6;
+    border: 1px solid var(--special-gray);
     color: var(--primary-color);
-    margin: 20px 0;
+    margin: 30px 0;
     display: flex;
     align-items: center;
 }
@@ -30,16 +25,12 @@
 
 #search-gig-form i {
     color: #d6d6d6;
-    margin: 0 15px 0 20px;
+    margin-left: 25px;
 }
 
 #search-gig-form #search-gig {
     flex: 1;
-    font-size: 15px;
-    outline: none;
     border: none;
-    margin: 10px 0;
-    padding-right: 20px;
     border-top-right-radius: inherit;
     border-bottom-right-radius: inherit;
 }
