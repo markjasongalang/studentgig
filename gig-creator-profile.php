@@ -161,14 +161,13 @@
         document.querySelector('.closed-gigs')
     ];
 
+    // Active Gigs
     tabs[0].addEventListener('click', () => {
         sections.forEach(section => section.style.display = 'none');
         tabs.forEach(tab => tab.classList.remove('active'));
         sections[0].style.display = 'block';
         tabs[0].classList.add('active');
     });
-    
-    // Active Gigs
     
     
     // Closed Gigs
