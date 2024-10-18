@@ -143,6 +143,10 @@ input[type=submit]:hover, button:hover {
     background-color: var(--secondary-color);
 }
 
+input[type=file] {
+    cursor: pointer;
+}
+
 .content {
     margin: 7px 0;
     line-height: 1.5;

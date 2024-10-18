@@ -14,15 +14,34 @@
     height: 250px;
     border: 1px solid var(--special-gray);
     border-radius: 100%;
+    object-fit: cover;
+}
+
+.left #change-photo-form {
+    display: none;
 }
 
 .left #change-photo-btn {
     margin: 10px 0 20px 0;
 }
 
+.left #save-profile-image {
+    margin-top: 5px;
+}
+
 .left p {
     font-size: 17px;
     margin: 10px 0;
+}
+
+.left .input-help {
+    font-size: 14px;
+    margin: 0;
+}
+
+.left #edit-profile-form .input-label,
+.left #edit-profile-form input {
+    display: none;
 }
 
 .main {

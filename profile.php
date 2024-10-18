@@ -7,12 +7,42 @@
 <div class="container">
     <div class="left">
         <img id="profile-image" src="./images/profile-image.png" alt="Profile image">
+        <form id="change-photo-form" method="POST">
+            <input id="profile-image-upload" type="file" accept="image/*">
+            <input id="save-profile-image" type="submit" value="Save">
+        </form>
         <button id="change-photo-btn" class="text-btn" type="button">Change photo</button>
 
-        <h2>Mark Galang</h2>
-        <p>FEU Tech</p>
-        <p>Bachelor of Science in Computer Science with Specialization in Software Engineering</p>
-        <p>(2nd Year)</p>
+        <form id="edit-profile-form" method="POST">
+            <!-- Student Name -->
+            <h3 class="input-label">First name</h3>
+            <input type="text" placeholder="Enter first name">
+            <p class="input-help"></p>
+            <h3 class="input-label">Last name</h3>
+            <input type="text" placeholder="Enter last name">
+            <p class="input-help"></p>
+            <h2 class="displayed">Mark Galang</h2>
+            
+            <!-- University -->
+            <h3 class="input-label">University</h3>
+            <input type="text" placeholder="Enter university">
+            <p class="input-help"></p>
+            <p class="displayed">FEU Tech</p>
+            
+            <!-- Degree -->
+            <h3 class="input-label">Degree Program</h3>
+            <input type="text" placeholder="Enter degree program">
+            <p class="input-help"></p>
+            <p class="displayed">Bachelor of Science in Computer Science with Specialization in Software Engineering</p>
+            
+            <!-- Year Level -->
+            <h3 class="input-label">Year Level</h3>
+            <input type="text" placeholder="Enter year level">
+            <p class="input-help"></p>
+            <p class="displayed">(2nd Year)</p>
+
+            <input type="submit" value="Update">
+        </form>
 
         <button id="edit-profile-btn" class="text-btn" type="button">Edit profile</button>
     </div>
@@ -87,9 +117,69 @@
 
 <script>
     // ========================== SIDE ==========================
+    // Change Photo
+    const changePhotoBtn = document.querySelector('#change-photo-btn');
+    const profileImage = document.querySelector('#profile-image');
+    const changePhotoForm = document.querySelector('#change-photo-form');
 
+    changePhotoBtn.addEventListener('click', () => {
+        if (changePhotoBtn.innerHTML === 'Change photo') {
+            changePhotoForm.style.display = 'block';
+            
+            changePhotoBtn.innerHTML = 'Cancel';
+        } else {
+            changePhotoForm.reset();
+            changePhotoForm.style.display = 'none';
+            
+            changePhotoBtn.innerHTML = 'Change photo';
+        }
+    });
 
-    // ========================== MAIN - Navigation ==========================
+    const profileImageUpload = document.querySelector('#profile-image-upload');
+    profileImageUpload.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                profileImage.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        } else {
+            profileImage.src = './images/profile-image.png';
+        }
+    });
+
+    // Edit Profile
+    const editProfileBtn = document.querySelector('#edit-profile-btn');
+    editProfileBtn.addEventListener('click', () => {
+        if (editProfileBtn.innerHTML == 'Edit profile') {
+            document.querySelectorAll('.left #edit-profile-form .input-label').forEach(inputLabel => {
+                inputLabel.style.display = 'block';
+            });
+            document.querySelectorAll('.left #edit-profile-form input').forEach(input => {
+                input.style.display = 'block';
+            });
+            document.querySelectorAll('.displayed').forEach(displayed => {
+                displayed.style.display = 'none';
+            });
+            
+            editProfileBtn.innerHTML = 'Cancel';
+        } else {
+            document.querySelectorAll('.displayed').forEach(displayed => {
+                displayed.style.display = 'block';
+            });
+            document.querySelectorAll('.left #edit-profile-form .input-label').forEach(inputLabel => {
+                inputLabel.style.display = 'none';
+            });
+            document.querySelectorAll('.left #edit-profile-form input').forEach(input => {
+                input.style.display = 'none';
+            });
+
+            editProfileBtn.innerHTML = 'Edit profile';
+        }
+    });
+
+    // ========================== MAIN  ==========================
     const tabs = [
         document.querySelector('#about-me-tab'),
         document.querySelector('#applied-gigs-tab'),
@@ -102,7 +192,7 @@
         document.querySelector('.hired-gigs')
     ];
 
-    // ========================== ABOUT ME ==========================
+    // About Me
     tabs[0].addEventListener('click', () => {
         sections.forEach(section => section.style.display = 'none');
         tabs.forEach(tab => tab.classList.remove('active'));
@@ -139,7 +229,7 @@
         }
     });
     
-    // ========================== APPLIED GIGS ==========================
+    // Applied Gigs
     tabs[1].addEventListener('click', () => {
         sections.forEach(section => section.style.display = 'none');
         tabs.forEach(tab => tab.classList.remove('active'));
@@ -147,7 +237,7 @@
         tabs[1].classList.add('active');
     });
     
-    // ========================== HIRED GIGS ==========================
+    // Hired Gigs
     tabs[2].addEventListener('click', () => {
         sections.forEach(section => section.style.display = 'none');
         tabs.forEach(tab => tab.classList.remove('active'));
