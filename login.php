@@ -4,10 +4,6 @@
 ?>
 
 <div class="container">
-    <div class="account-options">
-
-    </div>
-
     <form id="login-form" method="POST">
         <h1>Login</h1>
 

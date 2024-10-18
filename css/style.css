@@ -24,6 +24,21 @@ img, input[type=submit], button {
     user-select: none;
 }
 
+input[type=checkbox] {
+    width: auto;
+    vertical-align: middle;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+input[type=date] {
+    cursor: text;
+}
+
+a {
+    color: var(--primary-color);
+}
+
 ::selection {
     color: var(--extra-color);
     background-color: var(--primary-color);

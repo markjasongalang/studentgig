@@ -1,0 +1,11 @@
+.agree {
+    margin: 10px 5px 0 5px;
+}
+
+.agree label {
+    cursor: pointer;
+}
+
+#gig-creator-signup-form {
+    display: none;
+}
