@@ -1,3 +1,4 @@
+/* ======================= Shared ======================= */
 .agree {
     margin: 10px 5px 0 5px;
 }
@@ -7,5 +8,19 @@
 }
 
 #gig-creator-signup-form {
+    display: none;
+}
+
+/* ======================= Confirm Email ======================= */
+#resend-code {
+    margin-top: 5px;
+}
+
+#change-email-toggle {
+    display: block !important;
+    margin: 20px auto !important;
+}
+
+#change-email-form {
     display: none;
 }
