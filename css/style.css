@@ -20,6 +20,10 @@ body, input, button, textarea, select {
     font-optical-sizing: auto;
 }
 
+img, input[type=submit], button {
+    user-select: none;
+}
+
 ::selection {
     color: var(--extra-color);
     background-color: var(--primary-color);
@@ -148,7 +152,7 @@ input[type=submit]:hover, button:hover {
 
 .outline-btn {
     background-color: white !important;
-    color: var(--primary-color) m !important;
+    color: var(--primary-color) !important;
     border: 1px solid var(--primary-color) !important;
 }
 
@@ -156,6 +160,15 @@ input[type=submit]:hover, button:hover {
     border: none !important;
     background-color: var(--secondary-color) !important;
     color: var(--extra-color) !important;
+}
+
+.text-btn {
+    width: auto;
+    background-color: transparent !important;
+    color: var(--primary-color) !important;
+    text-decoration: underline;
+    border: none;
+    padding: 0;
 }
 
 .back-btn {
@@ -169,6 +182,37 @@ input[type=submit]:hover, button:hover {
 
 .back-btn:hover {
     background: none;
+    color: var(--primary-color);
+}
+
+.gig-item {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 60px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    margin-bottom: 15px;
+}
+
+.gig-item:hover {
+    border: 1px solid var(--primary-color);
+}
+
+.gig-item h3, .gig-item > p, .gig-item div {
+    flex: 1;
+    text-align: center;
+}
+
+.gig-item .gig-title {
+    color: var(--primary-color);
+    text-align: left;
+}
+
+.gig-item i {
     color: var(--primary-color);
 }
 

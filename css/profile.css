@@ -1,0 +1,84 @@
+/* ------------------- Shared ------------------- */
+.container {
+    display: flex;
+}
+
+.left {
+    flex-basis: 30%;
+    padding: 0 20px;
+    text-align: center;
+}
+
+.left #profile-image {
+    width: 250px;
+    height: 250px;
+    border: 1px solid var(--special-gray);
+    border-radius: 100%;
+}
+
+.left #change-photo-btn {
+    margin: 10px 0 20px 0;
+}
+
+.left p {
+    font-size: 17px;
+    margin: 10px 0;
+}
+
+.main {
+    flex-basis: 70%;
+}
+
+.main .top-nav {
+    list-style-type: none;
+    border-bottom: 1px solid var(--special-gray);
+}
+
+.top-nav li {
+    display: inline-block;
+    margin-right: 40px;
+    padding: 0 10px 20px 10px;
+    cursor: pointer;
+}
+
+.top-nav li:hover,
+.top-nav li.active {
+    border-bottom: 1px solid var(--primary-color);
+}
+
+textarea {
+    display: none;
+}
+
+.main input[type=submit] {
+    display: none;
+}
+
+.gig-item:hover {
+    border: none;
+}
+
+.gig-item button {
+    margin: 0;
+}
+
+.gig-item .with-actions {
+    padding: 0 10px;
+    text-align: center;
+}
+
+.gig-item .with-actions a {
+    color: var(--primary-color);
+}
+
+
+/* ------------------- Student (Profile) ------------------- */
+.about-me {
+    display: none;
+}
+
+.applied-gigs {
+    padding: 20px 0;
+}
+
+/* ------------------- Gig Creator (Profile) ------------------- */

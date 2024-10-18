@@ -42,32 +42,3 @@
 .gig-list {
     margin: 20px 0;
 }
-
-.gig-item {
-    text-decoration: none;
-    color: inherit;
-    display: block;
-    padding: 15px 30px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 60px;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    margin-bottom: 15px;
-}
-
-.gig-item:hover {
-    border: 1px solid var(--primary-color);
-}
-
-.gig-item h3, .gig-item > p, .gig-item div {
-    flex: 1;
-}
-
-.gig-item .gig-title {
-    color: var(--primary-color);
-}
-
-.gig-item i {
-    color: var(--primary-color);
-}
