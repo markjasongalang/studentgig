@@ -151,6 +151,8 @@
 
     // Edit Profile
     const editProfileBtn = document.querySelector('#edit-profile-btn');
+    const editProfileForm = document.querySelector('#edit-profile-form');
+
     editProfileBtn.addEventListener('click', () => {
         if (editProfileBtn.innerHTML == 'Edit profile') {
             document.querySelectorAll('.left #edit-profile-form .input-label').forEach(inputLabel => {
@@ -174,6 +176,8 @@
             document.querySelectorAll('.left #edit-profile-form input').forEach(input => {
                 input.style.display = 'none';
             });
+            
+            editProfileForm.reset();
 
             editProfileBtn.innerHTML = 'Edit profile';
         }
