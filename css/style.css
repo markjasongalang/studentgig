@@ -139,8 +139,10 @@ input[type=submit], button {
     transition: background-color 0.3s ease;
 }
 
-input[type=submit]:hover, button:hover {
-    background-color: var(--secondary-color);
+input[type=submit], button {
+    &:hover {
+        background-color: var(--secondary-color);
+    }
 }
 
 input[type=file] {
@@ -158,12 +160,12 @@ input[type=file] {
     background-color: white !important;
     color: var(--primary-color) !important;
     border: 1px solid var(--primary-color) !important;
-}
 
-.outline-btn:hover {
-    border: none !important;
-    background-color: var(--secondary-color) !important;
-    color: var(--extra-color) !important;
+    &:hover {
+        border: none !important;
+        background-color: var(--secondary-color) !important;
+        color: var(--extra-color) !important;
+    }
 }
 
 .text-btn {
@@ -182,11 +184,11 @@ input[type=file] {
     padding: 10px 0;
     font-size: 15px;
     color: var(--secondary-color);
-}
 
-.back-btn:hover {
-    background: none;
-    color: var(--primary-color);
+    &:hover {
+        background: none;
+        color: var(--primary-color);
+    }
 }
 
 .gig-item {
@@ -200,24 +202,24 @@ input[type=file] {
     border-radius: 60px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     margin-bottom: 15px;
-}
 
-.gig-item:hover {
-    border: 1px solid var(--primary-color);
-}
+    &:hover {
+        border: 1px solid var(--primary-color);
+    }
 
-.gig-item h3, .gig-item > p, .gig-item div {
-    flex: 1;
-    text-align: center;
-}
+    h3, p, div {
+        flex: 1;
+        text-align: center;
+    }
 
-.gig-item .gig-title {
-    color: var(--primary-color);
-    text-align: left;
-}
+    .gig-title {
+        color: var(--primary-color);
+        text-align: left;
+    }
 
-.gig-item i {
-    color: var(--primary-color);
+    i {
+        color: var(--primary-color);
+    }
 }
 
 /* ---------------------------- SPINNER ---------------------------- */
