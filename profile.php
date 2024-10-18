@@ -54,6 +54,7 @@
         </div>
 
         <div class="applied-gigs">
+            <h1>Applied gigs</h1>
             <div class="gig-item">
                 <h3 class="gig-title">English Tutor</h3>
                 <p class="gig-type">Remote</p>
@@ -62,24 +63,51 @@
                     <a href="./gig-details?g=">View</a>
                 </div>
                 <div class="with-actions">
-                    <button>Messages</button>
+                    <button>Message</button>
                 </div>
             </div>
         </div>
 
         <div class="hired-gigs">
-
+            <h1>Hired gigs</h1>
+            <div class="gig-item">
+                <h3 class="gig-title">English Tutor</h3>
+                <p class="gig-type">Remote</p>
+                <p>420 per hour</p>
+                <div class="with-actions">
+                    <a href="./gig-details?g=">View</a>
+                </div>
+                <div class="with-actions">
+                    <button>Message</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const aboutMeTab = document.querySelector('#about-me-tab');
-    const appliedGigsTab = document.querySelector('#applied-gigs-tab');
-    const hiredGigsTab = document.querySelector('#hired-gigs-tab');
+    // ========================== SIDE ==========================
 
-    aboutMeTab.addEventListener('click', () => {
-        // TODO: Continue this
+
+    // ========================== MAIN - Navigation ==========================
+    const tabs = [
+        document.querySelector('#about-me-tab'),
+        document.querySelector('#applied-gigs-tab'),
+        document.querySelector('#hired-gigs-tab')
+    ];
+
+    const sections = [
+        document.querySelector('.about-me'),
+        document.querySelector('.applied-gigs'),
+        document.querySelector('.hired-gigs')
+    ];
+
+    // ========================== ABOUT ME ==========================
+    tabs[0].addEventListener('click', () => {
+        sections.forEach(section => section.style.display = 'none');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        sections[0].style.display = 'block';
+        tabs[0].classList.add('active');
     });
 
     document.querySelector('#edit-about-me').addEventListener('click', (e) => {
@@ -109,6 +137,22 @@
             e.target.setAttribute('class', 'outline-btn');
             e.target.style.margin = '20px 0 0 0';
         }
+    });
+    
+    // ========================== APPLIED GIGS ==========================
+    tabs[1].addEventListener('click', () => {
+        sections.forEach(section => section.style.display = 'none');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        sections[1].style.display = 'block';
+        tabs[1].classList.add('active');
+    });
+    
+    // ========================== HIRED GIGS ==========================
+    tabs[2].addEventListener('click', () => {
+        sections.forEach(section => section.style.display = 'none');
+        tabs.forEach(tab => tab.classList.remove('active'));
+        sections[2].style.display = 'block';
+        tabs[2].classList.add('active');
     });
 </script>
 

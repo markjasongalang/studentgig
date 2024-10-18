@@ -81,4 +81,9 @@ textarea {
     padding: 20px 0;
 }
 
+.hired-gigs {
+    padding: 20px 0;
+    display: none;
+}
+
 /* ------------------- Gig Creator (Profile) ------------------- */
