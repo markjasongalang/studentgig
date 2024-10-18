@@ -76,8 +76,7 @@ nav li a {
     transition: color 0.3s ease, background-color 0.3s;
 }
 
-nav li a:hover,
-nav .active {
+nav li a:hover {
     color: var(--extra-color);
     background-color: var(--secondary-color);
 }
@@ -85,6 +84,17 @@ nav .active {
 nav .special-link {
     color: var(--extra-color);
     background-color: var(--primary-color);
+}
+
+nav #logout-btn {
+    margin: 0 !important;
+    padding: 5px 15px !important;
+    text-decoration: none;
+
+    &:hover {
+        color: var(--extra-color) !important;
+        background-color: var(--secondary-color) !important;
+    }
 }
 
 .container {

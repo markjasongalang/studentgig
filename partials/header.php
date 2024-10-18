@@ -1,3 +1,12 @@
+<?php
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['logout_btn'])) {
+        // TODO: Logout
+        
+        header('Location: ./login');
+        exit;
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -25,5 +34,12 @@
                 <li><a class="special-link" href="./post-a-gig"><i class="ri-edit-fill"></i> Post a Gig</a></li>
                 <li><a href="./login">Login</a></li>
                 <li><a href="./signup">Signup</a></li>
+                <li><a href="./">Profile</a></li>
+
+                <li>
+                    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+                        <input name="logout_btn" id="logout-btn" class="text-btn" type="submit" value="Logout">
+                    </form>
+                </li>
             </ul>
         </nav>
