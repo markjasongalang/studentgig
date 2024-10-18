@@ -1,0 +1,29 @@
+.applicant-item {
+    text-decoration: none;
+    color: inherit;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 60px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    margin-bottom: 15px;
+
+    &:hover {
+        border: none;
+    }
+
+    a {
+        display: inline-block;
+        color: var(--secondary-color);
+    }
+
+    button {
+        width: auto;
+        margin: 0 0 0 20px;
+    }
+
+    .applicant-name {
+        color: var(--primary-color);
+    }
+}
