@@ -186,7 +186,7 @@ input[type=file] {
     color: var(--secondary-color);
 
     &:hover {
-        background: none;
+        background: none !important;
         color: var(--primary-color);
     }
 }

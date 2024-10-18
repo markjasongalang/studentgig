@@ -1,11 +1,12 @@
 <?php
-    $title = 'Profile';
+    $title = 'Student Profile';
     $css_file_name = 'profile';
     include './partials/header.php';
 ?>
 
 <div class="container">
     <div class="left">
+        <!-- Profile Image -->
         <img id="profile-image" src="./images/profile-image.png" alt="Profile image">
         <form id="change-photo-form" method="POST">
             <input id="profile-image-upload" type="file" accept="image/*">
