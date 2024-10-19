@@ -2,6 +2,8 @@
     $title = 'Confirm Email';
     $css_file_name = 'auth';
     include './partials/header.php';
+
+    print_r($_SESSION['register_form_data']);
 ?>
 
 <div class="container">
