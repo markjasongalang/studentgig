@@ -34,15 +34,25 @@
             </a>
 
             <ul>
-                <li><a class="special-link" href="./post-a-gig"><i class="ri-edit-fill"></i> Post a Gig</a></li>
-                <li><a href="./login">Login</a></li>
-                <li><a href="./signup">Signup</a></li>
-                <li><a href="./">Profile</a></li>
-
-                <li>
-                    <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
-                        <input name="logout" id="logout-btn" class="text-btn" type="submit" value="Logout">
-                    </form>
-                </li>
+                <?php if (!isset($_SESSION['username']) || (isset($_SESSION['username']) && $_SESSION['role'] == 'gig creator')) { ?>
+                    <li><a class="special-link" href="./post-a-gig"><i class="ri-edit-fill"></i> Post a Gig</a></li>
+                <?php } ?>
+                
+                <?php if (!isset($_SESSION['username']) && !isset($_SESSION['role'])) { ?>
+                    <li><a href="./login">Login</a></li>
+                    <li><a href="./signup">Signup</a></li>
+                <?php } ?>
+                
+                <?php if (isset($_SESSION['username']) && isset($_SESSION['role'])) { ?>
+                    <?php if ($_SESSION['role'] == 'student') { ?>
+                        <li><a href="./student-profile">Profile</a></li>
+                    <?php } ?>
+                    
+                    <li>
+                        <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
+                            <input name="logout" id="logout-btn" class="text-btn" type="submit" value="Logout">
+                        </form>
+                    </li>
+                <?php } ?>                    
             </ul>
         </nav>

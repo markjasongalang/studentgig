@@ -1,6 +1,11 @@
 <?php
     $title= 'Post a gig';
-    include './partials/header.php'
+    include './partials/header.php';
+
+    if (!isset($_SESSION['username']) || $_SESSION['role'] != 'gig creator') {
+        header('Location: ./login');
+        exit;
+    }
 ?>
 
 <div class="container">

@@ -3,8 +3,9 @@
     $css_file_name = "index";
     include './partials/header.php';
 
-    if (isset($_SESSION['username']) && isset($_SESSION['role'])) {
-        echo $_SESSION['username'] . ' ' . $_SESSION['role'];
+    if (isset($_SESSION['username']) && isset($_SESSION['role']) && $_SESSION['role'] == 'gig creator') {
+        header('Location: ./gig-creator-profile');
+        exit;
     }
 ?>
 
@@ -18,7 +19,7 @@
 
     <div class="gig-list">
         <a href="./gig-details?g=" class="gig-item">
-            <h3 class="gig-title">English Tutor</h3>
+            <h3 class="gig-title">Online Tutor for High School Math (Flexible Hours)</h3>
             <p class="gig-type">Remote</p>
             <div>
                 <p>Payment</p>
@@ -39,9 +40,11 @@
         const gigItem = document.querySelector('.gig-item').cloneNode(true);
         if (i % 2 == 0) {
             gigItem.querySelector('.gig-type').innerHTML = 'Onsite';
+            gigItem.querySelector('.gig-title').innerHTML = 'Graphic Designer Needed for Quick Logo Project';
         }
         if (i % 3 == 0) {
             gigItem.querySelector('.gig-type').innerHTML = 'Hybrid';
+            gigItem.querySelector('.gig-title').innerHTML = 'Content Moderator for Online Community';
         }
         gigList.appendChild(gigItem);
     }

@@ -1,5 +1,5 @@
 <?php
-    $title = 'Gig Creator Profile';
+    $title = 'Gig Creator';
     $css_file_name = 'profile';
     include './partials/header.php';
 ?>
