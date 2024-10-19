@@ -26,8 +26,8 @@
     <form id="change-email-form" method="POST">
         <!-- New Email -->
         <h3 class="input-label">New Email</h3>
-        <input type="email" placeholder="Enter new email">
-        <p class="input-help"></p>
+        <input name="new_email" type="email" placeholder="Enter new email">
+        <p id="new-email-err" class="input-help"></p>
         
         <div id="loader"><div class="spinner"></div></div>
         <input name="change_email" type="submit" value="Change">
@@ -102,10 +102,17 @@
                 changeEmailForm.querySelector('#loader').style.display = 'none';
                 e.submitter.disabled = false;
 
+                changeEmailForm.querySelector('#new-email-err').innerHTML = data.errors?.new_email_err || '';
+
                 if (data.success) {
-
+                    changeEmailForm.querySelector('#new-email-err').innerHTML = 'Email has been updated. Please resend code :)';
+                    setTimeout(() => {
+                        e.target.reset();
+                        e.target.style.display = 'none';
+                        changeEmailToggle.innerHTML = 'Change Email';
+                        changeEmailForm.querySelector('#new-email-err').innerHTML = '';
+                    }, 3000);
                 }
-
             })
             .catch(error => console.error('Error:', error));
     });

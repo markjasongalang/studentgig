@@ -22,13 +22,16 @@
     // Retrieve session variables (from previous page /signup)
     $role = $_SESSION['register_form_data']['role'];
 
+    // Specifics:
     if ($role == 'student') {
         // TODO: Get session from student signup
     } else {
+        $gig_creator_id = $_SESSION['register_form_data']['gig_creator_id'];
         $company = $_SESSION['register_form_data']['company'];
+        $valid_id_image_path = $_SESSION['register_form_data']['valid_id_image_path'];
     }
 
-    // Common in both accounts:
+    // Common:
     $first_name = $_SESSION['register_form_data']['first_name'];
     $last_name = $_SESSION['register_form_data']['last_name'];
     $birthdate = $_SESSION['register_form_data']['birthdate'];
@@ -38,14 +41,14 @@
     $terms = $_SESSION['register_form_data']['terms'];
     
     // Confirm Email
-    $verif_code = '';
+    $verif_code = $expires_at = '';
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['confirm'])) {
         if (empty($_POST['verif_code'])) {
             $errors['verif_code_err'] = 'Please enter the code';
         } else {
             $verif_code = sanitize_input($_POST['verif_code']);
 
-            $sql = 'SELECT code, is_verified, expires_at FROM verification_codes WHERE email = ? AND is_verified = 0 ORDER BY expires_at DESC LIMIT 1';
+            $sql = 'SELECT code, is_verified, expires_at FROM verification_codes WHERE email = ? ORDER BY expires_at DESC LIMIT 1';
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('s', $email);
             $stmt->execute();
@@ -53,36 +56,43 @@
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
 
+            $expires_at = $row['expires_at'];
+
             if ($row) {
                 $cur_time = date('Y-m-d H:i:s');
 
                 if ($verif_code != $row['code']) {
                     $errors['verif_code_err'] = 'Incorrect verification code';
-                } elseif ($cur_time > $row['expires_at'] || $row['is_verified'] == 1) {
-                    $errors['verif_code_err'] = "Verification code has expired. Please resend code :)";
+                } elseif ($cur_time > $expires_at || $row['is_verified'] == 1) {
+                    $errors['verif_code_err'] = 'Verification code has expired. Please resend code :)';
                 }
             } else {
-                $errors['verif_code_err'] = "No verification code found for the email you provided";
+                $errors['verif_code_err'] = 'No verification code found for the email you provided';
             }
         }
 
         if (empty($errors)) {
             try {
                 // verification_codes table
-                $sql = 'UPDATE verification_codes SET is_verified = 1 WHERE email = ? AND code = ?';
+                $sql = 'UPDATE verification_codes SET is_verified = 1, expires_at = ? WHERE email = ? AND code = ?';
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param('ss', $email, $verif_code);
+                $stmt->bind_param('sss', $expires_at, $email, $verif_code);
                 $stmt->execute();
 
                 if ($role == 'student') {
-                    // TODO: Save student in db
+                    // New student account
     
-                } else {
-                    // TODO: Save gig creator in db
+                    // students_about_me table
                     
+                } else {
+                    // New gig creator account
+                    $sql = 'INSERT INTO gig_creators (id, username, email, first_name, last_name, company, valid_id_image_path, birthdate, terms_and_privacy, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param('ssssssssss', $gig_creator_id, $username, $email, $first_name, $last_name, $company, $valid_id_image_path, $birthdate, $terms, $password);
+                    $stmt->execute();
                 }
             } catch (Exception $e) {
-                $errors['verif_code_err'] = "There was problem in creating your account. Please try again later";
+                $errors['verif_code_err'] = 'There was problem in creating your account. Please try again later';
                 $response['success'] = false;
                 $response['errors'] = $errors;
                 exit(json_encode($response));
@@ -145,8 +155,29 @@
     }
     
     // Change Email
+    $new_email = '';
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['change_email'])) {
-        $response['sample'] = 'Change email';
+        if (empty($_POST['new_email'])) {
+            $errors['new_email_err'] = 'Please provide a new email';
+        } else {
+            $new_email = sanitize_input($_POST['new_email']);
+
+            if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+                $errors['new_email_err'] = 'Invalid email format';
+            } else {
+                // TODO: check email in db
+            }
+        }
+        
+        if (empty($errors)) {
+            $_SESSION['register_form_data']['email'] = $new_email;
+            $email = $_SESSION['register_form_data']['email'];
+
+            $response['success'] = true;
+        } else {
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        }
     }
 
     exit(json_encode($response));
