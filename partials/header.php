@@ -1,9 +1,10 @@
 <?php
     session_start();
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['logout_btn'])) {
-        // TODO: Logout
-        
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['logout'])) {
+        $_SESSION = array();
+        session_destroy();
+
         header('Location: ./login');
         exit;
     }
@@ -40,7 +41,7 @@
 
                 <li>
                     <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST">
-                        <input name="logout_btn" id="logout-btn" class="text-btn" type="submit" value="Logout">
+                        <input name="logout" id="logout-btn" class="text-btn" type="submit" value="Logout">
                     </form>
                 </li>
             </ul>

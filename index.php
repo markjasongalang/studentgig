@@ -2,6 +2,10 @@
     $title = "Find gigs for students <3";
     $css_file_name = "index";
     include './partials/header.php';
+
+    if (isset($_SESSION['username']) && isset($_SESSION['role'])) {
+        echo $_SESSION['username'] . ' ' . $_SESSION['role'];
+    }
 ?>
 
 <div class="container">

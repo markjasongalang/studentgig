@@ -117,9 +117,9 @@
                 $conn->close();
             }
 
-            // $_SESSION['username'] = $username;
-            // $_SESSION['role'] = $role;
-            // unset($_SESSION['register_form_data']);
+            $_SESSION['username'] = $username;
+            $_SESSION['role'] = $role;
+            unset($_SESSION['register_form_data']);
             $response['success'] = true;
             $response['url'] = './';
         } else {
@@ -184,7 +184,22 @@
             if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
                 $errors['new_email_err'] = 'Invalid email format';
             } else {
-                // TODO: check email in db
+                $sql = 'SELECT email FROM students WHERE email = ?
+                        UNION
+                        SELECT email FROM gig_creators WHERE email = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ss', $new_email, $new_email);
+                if ($stmt->execute()) {
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        if ($row['email'] === $new_email) {
+                            $errors['new_email_err'] = 'Email is already taken';
+                            break;
+                        }
+                    }
+                } else {
+                    $errors['new_email_err'] = 'There was a problem in verifying your email';
+                }
             }
         }
         

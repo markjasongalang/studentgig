@@ -2,6 +2,11 @@
     $title = 'Confirm Email';
     $css_file_name = 'auth';
     include './partials/header.php';
+
+    if (!isset($_SESSION['register_form_data'])) {
+        header('Location: ./signup');
+        exit;
+    }
 ?>
 
 <div class="container">
@@ -51,7 +56,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 confirmEmailForm.querySelector('#loader').style.display = 'none';
                 confirmEmailForm.querySelector('#confirm').disabled = false;
                 confirmEmailForm.querySelector('#resend-code').disabled = false;
@@ -62,7 +67,7 @@
                     if (data.resend_success) {
                         confirmEmailForm.querySelector('#verif-code-err').innerHTML = data.resend_success;
                     } else {
-                        // window.location.href = data.url;
+                        window.location.href = data.url;
                     }
                 }
             })

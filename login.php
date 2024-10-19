@@ -1,6 +1,11 @@
 <?php
     $title = 'Login';
     include './partials/header.php';
+
+    if (isset($_SESSION['username']) && isset($_SESSION['role'])) {
+        header('Location: ./');
+        exit;
+    }
 ?>
 
 <div class="container">
