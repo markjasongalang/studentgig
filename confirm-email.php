@@ -13,8 +13,8 @@
     <form id="confirm-email-form" method="POST">
         <!-- Verification Code -->
         <h3 class="input-label">Verification Code</h3>
-        <input type="number" placeholder="Enter 6-digit verification code">
-        <p class="input-help"></p>
+        <input name="verif_code" type="number" placeholder="Enter 6-digit verification code">
+        <p id="verif-code-err" class="input-help"></p>
 
         <div id="loader"><div class="spinner"></div></div>
         <input name="confirm" id="confirm" type="submit" value="Confirm">
@@ -29,11 +29,48 @@
         <input type="email" placeholder="Enter new email">
         <p class="input-help"></p>
         
-        <input type="submit" value="Change">
+        <div id="loader"><div class="spinner"></div></div>
+        <input name="change_email" type="submit" value="Change">
     </form>
 </div>
 
 <script>
+    // Confirm Email
+    const confirmEmailForm = document.querySelector('#confirm-email-form');
+    confirmEmailForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        confirmEmailForm.querySelector('#loader').style.display = 'block';
+        confirmEmailForm.querySelector('#confirm').disabled = true;
+        confirmEmailForm.querySelector('#resend-code').disabled = true;
+
+        fetch('./api/handle-confirm-email', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                confirmEmailForm.querySelector('#loader').style.display = 'none';
+                confirmEmailForm.querySelector('#confirm').disabled = false;
+                confirmEmailForm.querySelector('#resend-code').disabled = false;
+
+                confirmEmailForm.querySelector('#verif-code-err').innerHTML = data.errors?.verif_code_err || '';
+                
+                if (data.success) {
+                    if (data.resend_success) {
+                        confirmEmailForm.querySelector('#verif-code-err').innerHTML = data.resend_success;
+                    } else {
+                        // window.location.href = data.url;
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
+
     // Change Email
     const changeEmailToggle = document.querySelector('#change-email-toggle');
     const changeEmailForm = document.querySelector('#change-email-form');
@@ -46,6 +83,31 @@
             changeEmailForm.style.display = 'none';
             changeEmailToggle.innerHTML = 'Change Email';
         }
+    });
+
+    changeEmailForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        changeEmailForm.querySelector('#loader').style.display = 'block';
+        formData.append(e.submitter.name, true);
+
+        fetch('./api/handle-confirm-email', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                changeEmailForm.querySelector('#loader').style.display = 'none';
+                e.submitter.disabled = false;
+
+                if (data.success) {
+
+                }
+
+            })
+            .catch(error => console.error('Error:', error));
     });
 </script>
 
