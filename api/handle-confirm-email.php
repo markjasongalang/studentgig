@@ -24,7 +24,11 @@
 
     // Specifics:
     if ($role == 'student') {
-        // TODO: Get session from student signup
+        $user_id = $_SESSION['register_form_data']['user_id'];
+        $university = $_SESSION['register_form_data']['university'];
+        $year_level = $_SESSION['register_form_data']['year_level'];
+        $degree = $_SESSION['register_form_data']['degree'];
+        $student_id_image_path = $_SESSION['register_form_data']['student_id_image_path'];
     } else {
         $gig_creator_id = $_SESSION['register_form_data']['gig_creator_id'];
         $company = $_SESSION['register_form_data']['company'];
@@ -72,6 +76,9 @@
         }
 
         if (empty($errors)) {
+            // Enable exceptions for mysqli
+            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
             try {
                 // verification_codes table
                 $sql = 'UPDATE verification_codes SET is_verified = 1, expires_at = ? WHERE email = ? AND code = ?';
@@ -81,9 +88,16 @@
 
                 if ($role == 'student') {
                     // New student account
+                    $sql = 'INSERT INTO students (id, username, email, first_name, last_name, university, year_level, degree_program, student_id_image_path, birthdate, terms_and_privacy, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param('ssssssssssss', $user_id, $username, $email, $first_name, $last_name, $university, $year_level, $degree, $student_id_image_path, $birthdate, $terms, $password);
+                    $stmt->execute();
     
                     // students_about_me table
-                    
+                    $sql = 'INSERT INTO students_about_me (student) VALUES (?)';
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param('s', $username);
+                    $stmt->execute();
                 } else {
                     // New gig creator account
                     $sql = 'INSERT INTO gig_creators (id, username, email, first_name, last_name, company, valid_id_image_path, birthdate, terms_and_privacy, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
@@ -91,16 +105,21 @@
                     $stmt->bind_param('ssssssssss', $gig_creator_id, $username, $email, $first_name, $last_name, $company, $valid_id_image_path, $birthdate, $terms, $password);
                     $stmt->execute();
                 }
-            } catch (Exception $e) {
+            } catch (mysqli_sql_exception  $e) {
                 $errors['verif_code_err'] = 'There was problem in creating your account. Please try again later';
                 $response['success'] = false;
                 $response['errors'] = $errors;
                 exit(json_encode($response));
             } finally {
-                $stmt->close();
+                if ($stmt) {
+                    $stmt->close();
+                }
                 $conn->close();
             }
 
+            // $_SESSION['username'] = $username;
+            // $_SESSION['role'] = $role;
+            // unset($_SESSION['register_form_data']);
             $response['success'] = true;
             $response['url'] = './';
         } else {

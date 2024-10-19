@@ -72,10 +72,10 @@
         
         <!-- Terms of Service & Privacy Policy -->
         <div class="agree">
-            <input name="student_terms" id="student-terms" type="checkbox">
+            <input name="terms" id="student-terms" type="checkbox">
             <label for="student-terms">I agree to the <a href="./terms-of-service" target="_blank">Terms of Service</a> and <a href="./privacy-policy" target="_blank">Privacy Policy</a></label>
         </div>
-        <p id="student-terms-err" class="input-help"></p>
+        <p id="terms-err" class="input-help"></p>
 
         <div id="loader"><div class="spinner"></div></div>
         <input name="student_signup" type="submit" value="Signup">
@@ -176,8 +176,21 @@
                 e.submitter.disabled = false;
 
                 if (data.success) {
-
+                    // window.location.href = data.url;
                 }
+
+                studentSignupForm.querySelector('#first-name-err').innerHTML = data.errors?.first_name_err || '';
+                studentSignupForm.querySelector('#last-name-err').innerHTML = data.errors?.last_name_err || '';
+                studentSignupForm.querySelector('#birthdate-err').innerHTML = data.errors?.birthdate_err || '';
+                studentSignupForm.querySelector('#university-err').innerHTML = data.errors?.university_err || '';
+                studentSignupForm.querySelector('#year-level-err').innerHTML = data.errors?.year_level_err || '';
+                studentSignupForm.querySelector('#degree-err').innerHTML = data.errors?.degree_err || '';
+                studentSignupForm.querySelector('#student-id-err').innerHTML = data.errors?.student_id_err || '';
+                studentSignupForm.querySelector('#email-err').innerHTML = data.errors?.email_err || '';
+                studentSignupForm.querySelector('#username-err').innerHTML = data.errors?.username_err || '';
+                studentSignupForm.querySelector('#password-err').innerHTML = data.errors?.password_err || '';
+                studentSignupForm.querySelector('#confirm-pass-err').innerHTML = data.errors?.confirm_pass_err || '';
+                studentSignupForm.querySelector('#terms-err').innerHTML = data.errors?.terms_err || '';
             })
             .catch(error => console.error('Error', error));
     });
@@ -198,7 +211,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 gigCreatorSignupForm.querySelector('#loader').style.display = 'none';
                 e.submitter.disabled = false;
 
