@@ -171,12 +171,12 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 studentSignupForm.querySelector('#loader').style.display = 'none';
                 e.submitter.disabled = false;
 
                 if (data.success) {
-                    // window.location.href = data.url;
+                    window.location.href = data.url;
                 }
 
                 studentSignupForm.querySelector('#first-name-err').innerHTML = data.errors?.first_name_err || '';

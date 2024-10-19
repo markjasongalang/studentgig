@@ -87,20 +87,22 @@
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors['email_err'] = 'Invalid email format';
             } else {
-                // $sql = 'SELECT email FROM students WHERE email = ?';
-                // $stmt = $conn->prepare($sql);
-                // $stmt->bind_param('s', $email);
-                // if ($stmt->execute()) {
-                //     $result = $stmt->get_result();
-                //     if ($result->num_rows > 0) {
-                //         $row = $result->fetch_assoc();
-                //         if ($email == $row['email']) {
-                //             $errors['email_err'] = 'Email is already taken';
-                //         }
-                //     }
-                // } else {
-                //     $errors['email_err'] = 'There was a problem in verifying your email';
-                // }
+                $sql = 'SELECT email FROM students WHERE email = ?
+                        UNION
+                        SELECT email FROM gig_creators WHERE email = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ss', $email, $email);
+                if ($stmt->execute()) {
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        if ($row['email'] === $email) {
+                            $errors['email_err'] = 'Email is already taken';
+                            break;
+                        }
+                    }
+                } else {
+                    $errors['email_err'] = 'There was a problem in verifying your email';
+                }
             }
         }
 
@@ -114,20 +116,22 @@
             } elseif (preg_match('/\s/', $username)) {
                 $errors['username_err'] = "Username cannot contain spaces";
             } else {
-                // $sql = 'SELECT username FROM students WHERE username = ?';
-                // $stmt = $conn->prepare($sql);
-                // $stmt->bind_param('s', $username);
-                // if ($stmt->execute()) {
-                //     $result = $stmt->get_result();
-                //     if ($result->num_rows > 0) {
-                //         $row = $result->fetch_assoc();
-                //         if ($username == $row['username']) {
-                //             $errors['username_err'] = 'Username is already taken';
-                //         }
-                //     }
-                // } else {
-                //     $errors['username_err'] = 'There was a problem in verifying your username';
-                // }
+                $sql = 'SELECT username FROM students WHERE username = ?
+                        UNION
+                        SELECT username FROM gig_creators WHERE username = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ss', $username, $username);
+                if ($stmt->execute()) {
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        if ($row['username'] === $username) {
+                            $errors['username_err'] = 'Username is already taken';
+                            break;
+                        }
+                    }
+                } else {
+                    $errors['username_err'] = 'There was a problem in verifying your username';
+                }
             }
         }
 
@@ -282,15 +286,17 @@
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $errors['email_err'] = 'Invalid email format';
             } else {
-                $sql = 'SELECT email FROM gig_creators WHERE email = ?';
+                $sql = 'SELECT email FROM students WHERE email = ?
+                        UNION
+                        SELECT email FROM gig_creators WHERE email = ?';
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param('s', $email);
+                $stmt->bind_param('ss', $email, $email);
                 if ($stmt->execute()) {
                     $result = $stmt->get_result();
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
-                        if ($email == $row['email']) {
+                    while ($row = $result->fetch_assoc()) {
+                        if ($row['email'] === $email) {
                             $errors['email_err'] = 'Email is already taken';
+                            break;
                         }
                     }
                 } else {
@@ -309,15 +315,17 @@
             } elseif (preg_match('/\s/', $username)) {
                 $errors['username_err'] = "Username cannot contain spaces";
             } else {
-                $sql = 'SELECT username FROM gig_creators WHERE username = ?';
+                $sql = 'SELECT username FROM students WHERE username = ?
+                        UNION
+                        SELECT username FROM gig_creators WHERE username = ?';
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param('s', $username);
+                $stmt->bind_param('ss', $username, $username);
                 if ($stmt->execute()) {
                     $result = $stmt->get_result();
-                    if ($result->num_rows > 0) {
-                        $row = $result->fetch_assoc();
-                        if ($username == $row['username']) {
+                    while ($row = $result->fetch_assoc()) {
+                        if ($row['username'] === $username) {
                             $errors['username_err'] = 'Username is already taken';
+                            break;
                         }
                     }
                 } else {
