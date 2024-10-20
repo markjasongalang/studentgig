@@ -105,7 +105,7 @@
                     $stmt->bind_param('ssssssssss', $gig_creator_id, $username, $email, $first_name, $last_name, $company, $valid_id_image_path, $birthdate, $terms, $password);
                     $stmt->execute();
                 }
-            } catch (mysqli_sql_exception  $e) {
+            } catch (mysqli_sql_exception $e) {
                 $errors['verif_code_err'] = 'There was problem in creating your account. Please try again later';
                 $response['success'] = false;
                 $response['errors'] = $errors;
