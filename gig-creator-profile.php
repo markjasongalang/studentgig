@@ -1,42 +1,59 @@
 <?php
+    $url_username = isset($_GET['u']) ? $_GET['u'] : '';
+
     $title = 'Gig Creator';
     $css_file_name = 'profile';
     include './partials/header.php';
+
+    if (empty($url_username)) {
+        if ($_SESSION['username']) {
+            $_GET['u'] = $_SESSION['username'];
+            header('Location: ./gig-creator-profile' . '?' . http_build_query($_GET));
+        } else {
+            header('Location: ./login');
+            exit;
+        }
+    }
 ?>
 
 <div class="container">
     <div class="left">
         <!-- Profile Image -->
-        <img id="profile-image" src="./images/profile-image.png" alt="Profile image">
+        <img id="profile-image" alt="Profile image">
         <form id="change-photo-form" method="POST">
-            <input id="profile-image-upload" type="file" accept="image/*">
-            <input id="save-profile-image" type="submit" value="Save">
+            <input type="hidden" id="gig-creator-id" name="gig_creator_id">
+            <input type="hidden" id="current-profile-image-path" name="current_profile_image_path">
+
+            <input name="profile_image_upload" id="profile-image-upload" type="file" accept="image/*">
+            <p id="profile-image-upload-err" class="input-help"></p>
+
+            <input name="save_profile_image" id="save-profile-image" type="submit" value="Save">
         </form>
         <button id="change-photo-btn" class="text-btn" type="button">Change photo</button>
 
         <form id="edit-profile-form" method="POST">
             <!-- Gig Creator Name -->
             <h3 class="input-label">First name</h3>
-            <input type="text" placeholder="Enter first name">
+            <input name="first_name" id="first-name" type="text" placeholder="Enter first name">
             <p class="input-help"></p>
             <h3 class="input-label">Last name</h3>
-            <input type="text" placeholder="Enter last name">
+            <input name="last_name" id="last-name" type="text" placeholder="Enter last name">
             <p class="input-help"></p>
-            <h2 class="displayed">Jason Creator</h2>
+            <h2 id="gig-creator-name" class="displayed"></h2>
             
             <!-- Email -->
             <h3 class="input-label">Email</h3>
-            <input type="email" placeholder="Enter email">
+            <input name="email" id="email" type="email" placeholder="Enter email">
             <p class="input-help"></p>
-            <p class="displayed">jason@example.com</p>
+            <p id="gig-creator-email" class="displayed"></p>
 
             <!-- Company -->
             <h3 class="input-label">Company</h3>
-            <input type="text" placeholder="Enter company (optional)">
+            <input name="company" id="company" type="text" placeholder="Enter company (optional)">
             <p class="input-help"></p>
-            <p class="displayed">Company</p>
+            <p id="gig-creator-company" class="displayed"></p>
 
-            <input type="submit" value="Update">
+            <input name="edit_profile" type="submit" value="Update">
         </form>
 
         <button id="edit-profile-btn" class="text-btn" type="button">Edit profile</button>
@@ -83,7 +100,38 @@
 </div>
 
 <script>
+    const username = getQueryParameter('u');
+
     // ========================== SIDE ==========================
+
+    // Gig Creator Details
+    retrieveGigCreator();
+
+    function retrieveGigCreator() {
+        fetch(`./api/handle-gig-creator-profile?u=${encodeURIComponent(username)}`)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                
+                if (data.success) {
+                    changePhotoForm.querySelector('#gig-creator-id').value = data.gig_creator.id;
+
+                    document.querySelector('#profile-image').src = data.gig_creator.profile_image_path.slice(1) || './images/profile-image.png';
+                    changePhotoForm.querySelector('#current-profile-image-path').value = data.gig_creator.profile_image_path || '';
+                    
+                    editProfileForm.querySelector('#gig-creator-name').innerHTML = data.gig_creator.first_name + ' ' + data.gig_creator.last_name;
+                    editProfileForm.querySelector('#gig-creator-email').innerHTML = data.gig_creator.email;
+                    editProfileForm.querySelector('#gig-creator-company').innerHTML = data.gig_creator.company;
+
+                    editProfileForm.querySelector('#first-name').value = data.gig_creator.first_name;
+                    editProfileForm.querySelector('#last-name').value = data.gig_creator.last_name;
+                    editProfileForm.querySelector('#email').value = data.gig_creator.email;
+                    editProfileForm.querySelector('#company').value = data.gig_creator.company;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     // Change Photo
     const changePhotoBtn = document.querySelector('#change-photo-btn');
     const profileImage = document.querySelector('#profile-image');
@@ -97,6 +145,8 @@
         } else {
             changePhotoForm.reset();
             changePhotoForm.style.display = 'none';
+
+            document.querySelector('#profile-image').src = changePhotoForm.querySelector('#current-profile-image-path').value.slice(1) || './images/profile-image.png';
             
             changePhotoBtn.innerHTML = 'Change photo';
         }
@@ -112,8 +162,39 @@
             };
             reader.readAsDataURL(file);
         } else {
-            profileImage.src = './images/profile-image.png';
+            profileImage.src = changePhotoForm.querySelector('#current-profile-image-path').value.slice(1) || './images/profile-image.png';
         }
+    });
+
+    changePhotoForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        changePhotoForm.querySelector('#save-profile-image').disabled = true;
+
+        fetch(`./api/handle-gig-creator-profile?u=${username}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                changePhotoForm.querySelector('#save-profile-image').disabled = false;
+
+                if (data.success) {
+                    changePhotoForm.reset();
+                    changePhotoForm.style.display = 'none';
+
+                    retrieveGigCreator();
+                    
+                    changePhotoBtn.innerHTML = 'Change photo';
+                }
+
+                changePhotoForm.querySelector('#profile-image-upload-err').innerHTML = data.errors?.profile_image_upload_err || '';
+            })
+            .catch(error => console.error('Error:', error));
     });
 
     // Edit Profile
@@ -144,11 +225,11 @@
                 input.style.display = 'none';
             });
             
-            editProfileForm.reset();
-
             editProfileBtn.innerHTML = 'Edit profile';
         }
     });
+
+    
 
     // ========================== MAIN  ==========================
     const tabs = [
@@ -177,6 +258,12 @@
         sections[1].style.display = 'block';
         tabs[1].classList.add('active');
     });
+
+    // ========================== GET QUERY PARAMETER ==========================
+    function getQueryParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
 </script>
 
 <?php
