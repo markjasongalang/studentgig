@@ -69,7 +69,7 @@
         </ul>
 
         <div class="active-gigs">
-            <a href="./gig-details?g=" class="gig-item">
+            <!-- <a href="./gig-details?g=" class="gig-item">
                 <h3 class="gig-title">English Tutor</h3>
                 <p class="gig-type">Remote</p>
                 <div>
@@ -81,11 +81,11 @@
                     <p>2 weeks</p>
                 </div>
                 <i class="ri-arrow-right-line"></i>
-            </a>
+            </a> -->
         </div>
         
         <div class="closed-gigs">
-            <a href="./gig-details?g=" class="gig-item">
+            <!-- <a href="./gig-details?g=" class="gig-item">
                 <h3 class="gig-title">Graphic Designer</h3>
                 <p class="gig-type">Onsite</p>
                 <div>
@@ -97,7 +97,7 @@
                     <p>3 months</p>
                 </div>
                 <i class="ri-arrow-right-line"></i>
-            </a>
+            </a> -->
         </div>
     </div>
 </div>
@@ -275,6 +275,45 @@
     });
 
     // ========================== MAIN  ==========================
+
+    // Retrieve Gigs
+    const activeGigs = document.querySelector('.active-gigs');
+
+    retrieveGigs();
+
+    function retrieveGigs() {
+        fetch(`./api/handle-gig-creator-profile?u=${username}&get_gigs=true`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                
+                if (data.success) {
+                    data.gigs.forEach(gig => {
+                        const gigItem = document.createElement('a');
+                        gigItem.setAttribute('href', `./gig-details?g=`);
+                        gigItem.classList.add('gig-item');
+                        
+                        gigItem.innerHTML = `
+                            <h3 class="gig-title">${gig.title}</h3>
+                            <p class="gig-type">${gig.gig_type}</p>
+                            <div>
+                                <p>Payment</p>
+                                <p>${gig.payment_amount} per ${gig.payment_unit}</p>
+                            </div>
+                            <div>
+                                <p>Duration</p>
+                                <p>${gig.duration_value} ${gig.duration_unit}</p>
+                            </div>
+                            <i class="ri-arrow-right-line"></i>
+                        `;
+
+                        activeGigs.appendChild(gigItem);
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     const tabs = [
         document.querySelector('#active-gigs-tab'),
         document.querySelector('#closed-gigs-tab')

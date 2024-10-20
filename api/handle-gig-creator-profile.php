@@ -18,7 +18,7 @@
     $errors = [];
 
     // Retrieve Gig Creator Details
-    if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($username)) {
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($username) && !isset($_GET['get_gigs'])) {
         // Enable exceptions for mysqli
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
@@ -37,7 +37,38 @@
             $response['success'] = false;
             $response['errors'] = $errors;
         } finally {
-            if ($stmt) {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
+    }
+
+    // Retrieve gigs of gig creator
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_gigs'])) {
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+        try {
+            $sql = 'SELECT title, gig_type, payment_amount, payment_unit, duration_value, duration_unit FROM gigs WHERE gig_creator = ? ORDER BY date_posted DESC';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('s', $username);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $gigs = [];
+
+            while ($row = $result->fetch_assoc()) {
+                $gigs[] = $row;
+            }
+
+            $response['success'] = true;
+            $response['gigs'] = $gigs;
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'There was problem in retrieving your gigs';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
                 $stmt->close();
             }
             $conn->close();
@@ -86,7 +117,7 @@
             } catch (Exception $ex2) {
                 $errors['profile_image_upload_err'] = 'Couldn\'t upload a new profile image';
             } finally {
-                if ($stmt) {
+                if (isset($stmt)) {
                     $stmt->close();
                 }
                 $conn->close();
@@ -161,7 +192,7 @@
                 $response['success'] = false;
                 $response['errors'] = $errors;
             } finally {
-                if ($stmt) {
+                if (isset($stmt)) {
                     $stmt->close();
                 }
                 $conn->close();
