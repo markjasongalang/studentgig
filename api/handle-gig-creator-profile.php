@@ -5,6 +5,13 @@
 
     header('Content-Type: application/json');
 
+    function sanitize_input($data) {
+        $data = trim($data);
+        $data = stripslashes($data);
+        $data = htmlspecialchars($data, ENT_QUOTES, 'UTF-8');
+        return $data;
+    }
+
     $username = isset($_GET['u']) ? $_GET['u'] : '';
 
     $response = [];
@@ -91,7 +98,79 @@
     }
 
     // Update profile details
-    
+    $first_name = $last_name = $email = $company = '';
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_profile'])) {
+        if (empty($_POST['first_name'])) {
+            $errors['first_name_err'] = 'First name is required';
+        } else {
+            $first_name = sanitize_input($_POST['first_name']);
+        }
+
+        if (empty($_POST['last_name'])) {
+            $errors['last_name_err'] = 'Last name is required';
+        } else {
+            $last_name = sanitize_input($_POST['last_name']);
+        }
+
+        if (empty($_POST['email'])) {
+            $errors['email_err'] = 'Email is required';
+        } else {
+            $email = sanitize_input($_POST['email']);
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors['email_err'] = 'Invalid email format';
+            } else {
+                $sql = 'SELECT username, email FROM students WHERE email = ?
+                        UNION
+                        SELECT username, email FROM gig_creators WHERE email = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ss', $email, $email);
+                if ($stmt->execute()) {
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        if ($row['email'] === $email && $row['username'] != $username) {
+                            $errors['email_err'] = 'Email is already taken';
+                            break;
+                        }
+                    }
+                } else {
+                    $errors['email_err'] = 'There was a problem in verifying your email';
+                }
+                $stmt->close();
+            }
+        }
+
+        if (!empty($_POST['company'])) {
+            $company = sanitize_input($_POST['company']);
+        }
+        
+        if (empty($errors)) {
+            // Enable exceptions for mysqli
+            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+            try {
+                $sql = 'UPDATE gig_creators SET first_name = ?, last_name = ?, email = ?, company = ? WHERE username = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('sssss', $first_name, $last_name, $email, $company, $username);
+                $stmt->execute();
+
+                $response['success'] = true;
+            } catch (mysqli_sql_exception $e) {
+                $errors['db_err'] = 'Couldn\'t update profile details';
+                $response['success'] = false;
+                $response['errors'] = $errors;
+            } finally {
+                if ($stmt) {
+                    $stmt->close();
+                }
+                $conn->close();
+            }
+        } else {
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        }
+    }
 
     exit(json_encode($response));
 ?>

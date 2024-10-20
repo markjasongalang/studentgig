@@ -35,25 +35,28 @@
             <!-- Gig Creator Name -->
             <h3 class="input-label">First name</h3>
             <input name="first_name" id="first-name" type="text" placeholder="Enter first name">
-            <p class="input-help"></p>
+            <p id="first-name-err" class="input-help"></p>
+
             <h3 class="input-label">Last name</h3>
             <input name="last_name" id="last-name" type="text" placeholder="Enter last name">
-            <p class="input-help"></p>
+            <p id="last-name-err" class="input-help"></p>
+
             <h2 id="gig-creator-name" class="displayed"></h2>
             
             <!-- Email -->
             <h3 class="input-label">Email</h3>
             <input name="email" id="email" type="email" placeholder="Enter email">
-            <p class="input-help"></p>
+            <p id="email-err" class="input-help"></p>
+
             <p id="gig-creator-email" class="displayed"></p>
 
             <!-- Company -->
             <h3 class="input-label">Company</h3>
             <input name="company" id="company" type="text" placeholder="Enter company (optional)">
-            <p class="input-help"></p>
+
             <p id="gig-creator-company" class="displayed"></p>
 
-            <input name="edit_profile" type="submit" value="Update">
+            <input name="edit_profile" id="edit-profile" type="submit" value="Update">
         </form>
 
         <button id="edit-profile-btn" class="text-btn" type="button">Edit profile</button>
@@ -224,12 +227,52 @@
             document.querySelectorAll('.left #edit-profile-form input').forEach(input => {
                 input.style.display = 'none';
             });
+
+            retrieveGigCreator();
             
             editProfileBtn.innerHTML = 'Edit profile';
         }
     });
 
-    
+    editProfileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        editProfileForm.querySelector('#edit-profile').disabled = true;
+
+        fetch(`./api/handle-gig-creator-profile?u=${username}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                editProfileForm.querySelector('#edit-profile').disabled = false;
+                
+                if (data.success) {
+                    document.querySelectorAll('.displayed').forEach(displayed => {
+                        displayed.style.display = 'block';
+                    });
+                    document.querySelectorAll('.left #edit-profile-form .input-label').forEach(inputLabel => {
+                        inputLabel.style.display = 'none';
+                    });
+                    document.querySelectorAll('.left #edit-profile-form input').forEach(input => {
+                        input.style.display = 'none';
+                    });
+
+                    retrieveGigCreator();
+                    
+                    editProfileBtn.innerHTML = 'Edit profile';
+                }
+                
+                editProfileForm.querySelector('#first-name-err').innerHTML = data.errors?.first_name_err || '';
+                editProfileForm.querySelector('#last-name-err').innerHTML = data.errors?.last_name_err || '';
+                editProfileForm.querySelector('#email-err').innerHTML = data.errors?.email_err || '';
+            })
+            .catch(error => console.error('Error:', error));
+    });
 
     // ========================== MAIN  ==========================
     const tabs = [
