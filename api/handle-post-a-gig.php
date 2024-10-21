@@ -75,10 +75,12 @@
             mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
             try {
-                $sql = 'INSERT INTO gigs (title, gig_creator, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                $expiration = date('Y-m-d H:i:s', strtotime('+10 days'));
+
+                $sql = 'INSERT INTO gigs (title, gig_creator, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address, expiration)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param('sssssssssss', $gig_title, $username, $duration_value, $duration_unit, $description, $skills, $schedule, $payment_value, $payment_unit, $gig_type, $address);
+                $stmt->bind_param('ssssssssssss', $gig_title, $username, $duration_value, $duration_unit, $description, $skills, $schedule, $payment_value, $payment_unit, $gig_type, $address, $expiration);
                 $stmt->execute();
 
                 $response['success'] = true;

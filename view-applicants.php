@@ -15,7 +15,7 @@
         <div>
             <a href="./student-profile?u=" target="_blank">View</a>
             <button class="outline-btn" type="button">Message</button>
-            <button type="button">Hire</button>
+            <button type="button">Invite to Hire</button>
         </div>
     </div>
 </div>

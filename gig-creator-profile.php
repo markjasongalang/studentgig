@@ -285,7 +285,9 @@
         fetch(`./api/handle-gig-creator-profile?u=${username}&get_gigs=true`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
+
+                // TODO: Separate Active and Closed Gigs
                 
                 if (data.success) {
                     data.gigs.forEach(gig => {
