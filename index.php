@@ -10,7 +10,8 @@
 ?>
 
 <div class="container">
-    <h1 class="tagline">Your next hire is here! <span>23</span> students are eager for gigs!</h1>
+    <!-- <h1 class="tagline">Your next hire is here! <span>23</span> students are eager for gigs!</h1> -->
+     <h1 class="tagline">Earn While You Learn: Flexible <span>Gigs for Students</span>, Tailored to Fit Your Schedule!</h1>
 
     <form id="search-gig-form" method="GET">
         <i class="ri-search-line"></i>

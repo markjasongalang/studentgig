@@ -92,8 +92,26 @@
             <?php if ($_SESSION['role'] == 'gig creator') { ?>
                 <a id="view-applicants" href="./view-applicants?g=<?php echo $_GET['g']; ?>">View Applicants</a>
                 <button id="edit-btn" class="outline-btn" type="button">Edit</button>
-                <input name="close_gig" class="outline-btn" type="submit" value="Close Gig">
-            <?php } ?>       
+                <button id="close-gig-btn" class="outline-btn" type="button">Close Gig</button>
+            <?php } ?>     
+        </div>
+
+        <!-- Close Gig Modal -->
+        <div id="close-gig-modal" class="modal">
+            <!-- Modal content -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <span class="close">&times;</span>
+                    <h2>Confirm Action</h2>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to close this gig?</p>
+                    <input name="close_gig" type="submit" value="Close Gig">
+                </div>
+                <!-- <div class="modal-footer">
+                    <h3>Modal Footer</h3>
+                </div> -->
+            </div>
         </div>
     </form>
 </div>
@@ -170,7 +188,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                // console.log(data);
+                console.log(data);
                 gigDetailsForm.querySelector('#loader').style.display = 'none';
                 e.submitter.disabled = false;
 
@@ -200,8 +218,6 @@
                     retrieveGigDetails();
 
                     editBtn.innerHTML = 'Edit';
-                } else if (data.close_gig_success) {
-                    // TODO: Close Gig
                 }
 
                 gigDetailsForm.querySelector('#gig-title-err').innerHTML = data.errors?.gig_title_err || '';
@@ -282,6 +298,33 @@
             retrieveGigDetails();
 
             editBtn.innerHTML = 'Edit';
+        }
+    });
+
+    // ========================== CLOSE GIG MODAL ==========================
+
+    // Get the button that opens the modal
+    const closeGigBtn = gigDetailsForm.querySelector('#close-gig-btn');
+
+    // Actual Close Gig Modal
+    const closeGigModal = gigDetailsForm.querySelector('#close-gig-modal');
+    // Get the <span> element that closes the modal
+    const closeModalBtn = closeGigModal.querySelector('.close');
+
+    // When the user clicks the button, open the modal 
+    closeGigBtn.addEventListener('click', () => {
+        closeGigModal.style.display = 'block';
+    });
+
+    // When the user clicks on <span> (x), close the modal
+    closeModalBtn.addEventListener('click', () => {
+        closeGigModal.style.display = 'none';
+    });
+
+    // When the user clicks anywhere outside of the modal, close it
+    document.addEventListener('click', (e) => {
+        if (e.target === closeGigModal) {
+            closeGigModal.style.display = 'none';
         }
     });
 
