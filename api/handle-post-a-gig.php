@@ -64,7 +64,7 @@
 
         $gig_type = $_POST['gig_type'];
 
-        if ($gig_type != 'remote' && empty($_POST['address'])) {
+        if ($gig_type != 'Remote' && empty($_POST['address'])) {
             $errors['address_err'] = 'Address is required';
         } else {
             $address = sanitize_input($_POST['address']);

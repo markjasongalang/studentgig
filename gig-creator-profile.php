@@ -292,7 +292,7 @@
                 if (data.success) {
                     data.gigs.forEach(gig => {
                         const gigItem = document.createElement('a');
-                        gigItem.setAttribute('href', `./gig-details?g=`);
+                        gigItem.setAttribute('href', `./gig-details?g=${gig.id}`);
                         gigItem.classList.add('gig-item');
                         
                         gigItem.innerHTML = `

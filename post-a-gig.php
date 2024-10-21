@@ -61,9 +61,9 @@
         <!-- Gig Type -->
         <h3 class="input-label">Gig Type</h3>
         <select name="gig_type" id="gig-type">
-            <option value="remote">Remote</option>
-            <option value="onsite">Onsite</option>
-            <option value="hybrid">Hybrid</option>
+            <option value="Remote">Remote</option>
+            <option value="Onsite">Onsite</option>
+            <option value="Hybrid">Hybrid</option>
         </select>
         <input name="address" id="address" type="text" placeholder="Enter complete address">
         <p id="address-err" class="input-help"></p>
@@ -116,7 +116,7 @@
     const address = postGigForm.querySelector('#address');
     gigType.addEventListener('change', (e) => {
         const selected = e.target.value;
-        if (selected !== 'remote') {
+        if (selected !== 'Remote') {
             address.style.display = 'block';
         } else {
             postGigForm.querySelector('#address-err').innerHTML = '';
