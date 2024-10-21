@@ -92,7 +92,6 @@
             <?php if ($_SESSION['role'] == 'gig creator') { ?>
                 <a id="view-applicants" href="./view-applicants?g=<?php echo $_GET['g']; ?>">View Applicants</a>
                 <button id="edit-btn" class="outline-btn" type="button">Edit</button>
-
                 <input name="close_gig" class="outline-btn" type="submit" value="Close Gig">
             <?php } ?>       
         </div>
@@ -125,14 +124,17 @@
                     gigDetailsForm.querySelector('#description-display').innerHTML = data.gig.description;
                     gigDetailsForm.querySelector('#description').value = data.gig.description;
                     
+                    
                     // Preferred Skills
                     gigDetailsForm.querySelector('#skills-display').innerHTML = data.gig.skills;
                     gigDetailsForm.querySelector('#skills').value = data.gig.skills;
                     
+                    
                     // Schedule/Time Commitment
                     gigDetailsForm.querySelector('#schedule-display').innerHTML = data.gig.schedule;
                     gigDetailsForm.querySelector('#schedule').value = data.gig.schedule;
-
+                    
+                    
                     // Payment information
                     gigDetailsForm.querySelector('#payment-display').innerHTML = `${data.gig.payment_amount} per ${data.gig.payment_unit}`;
                     gigDetailsForm.querySelector('#payment-value').value = data.gig.payment_amount;
@@ -158,11 +160,59 @@
 
         const formData = new FormData(e.target);
         formData.append(e.submitter.name, true);
-        e.submitter.disabled = true;
         
         gigDetailsForm.querySelector('#loader').style.display = 'block';
+        e.submitter.disabled = true;
 
-        
+        fetch(`./api/handle-gig-details?g=${gigId}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                gigDetailsForm.querySelector('#loader').style.display = 'none';
+                e.submitter.disabled = false;
+
+                if (data.update_gig_success) {
+                    document.querySelector('h1').style.display = 'block';
+
+                    document.querySelectorAll('.content').forEach(content => {
+                        content.style.display = 'block';
+                    });
+
+                    document.querySelector('.gig-title-label').style.display = 'none';
+                    document.querySelectorAll('input[type=text]').forEach(inputText => {
+                        inputText.style.display = 'none';
+                    });
+                    document.querySelectorAll('input[type=number]').forEach(inputNumber => {
+                        inputNumber.style.display = 'none';
+                    });
+                    document.querySelectorAll('textarea').forEach(textarea => {
+                        textarea.style.display = 'none';
+                    });
+                    document.querySelectorAll('select').forEach(select => {
+                        select.classList.remove('show');
+                    });
+                    document.querySelector('#update-gig').style.display = 'none';
+
+                    gigDetailsForm.querySelector('#address').classList.remove('show');
+                    retrieveGigDetails();
+
+                    editBtn.innerHTML = 'Edit';
+                } else if (data.close_gig_success) {
+                    // TODO: Close Gig
+                }
+
+                gigDetailsForm.querySelector('#gig-title-err').innerHTML = data.errors?.gig_title_err || '';
+                gigDetailsForm.querySelector('#duration-err').innerHTML = data.errors?.duration_err || '';
+                gigDetailsForm.querySelector('#description-err').innerHTML = data.errors?.description_err || '';
+                gigDetailsForm.querySelector('#skills-err').innerHTML = data.errors?.skills_err || '';
+                gigDetailsForm.querySelector('#schedule-err').innerHTML = data.errors?.schedule_err || '';
+                gigDetailsForm.querySelector('#payment-err').innerHTML = data.errors?.payment_err || '';
+                gigDetailsForm.querySelector('#address-err').innerHTML = data.errors?.address_err || '';
+            })
+            .catch(error => console.error('Error:', error));
     });
 
     // Gig Type Dropdown & Address
@@ -193,6 +243,8 @@
             });
             document.querySelectorAll('textarea').forEach(textarea => {
                 textarea.style.display = 'block';
+                // Need to place auto-resize here (after display: block, to make sure it works)
+                autoResizeTextarea(textarea);
             });
             document.querySelectorAll('select').forEach(select => {
                 select.classList.add('show');
@@ -238,6 +290,13 @@
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);
     }
+    
+    // ========================== AUTO-RESIZE TEXTAREAS ==========================
+    function autoResizeTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
 </script>
 
 <?php

@@ -17,6 +17,7 @@
     $response = [];
     $errors = [];
 
+    // Retrieve Gig Details
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         // Enable exceptions for mysqli
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
@@ -41,6 +42,93 @@
             }
             $conn->close();
         }
+    }
+
+    // Update Gig
+    $gig_title = $duration_value = $duration_unit = $description = $skills = $schedule = '';
+    $payment_value = $payment_unit = $gig_type = $address = '';
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update_gig'])) {
+        if (empty($_POST['gig_title'])) {
+            $errors['gig_title_err'] = 'Gig Title is required';
+        } else {
+            $gig_title = sanitize_input($_POST['gig_title']);
+        }
+
+        if (empty($_POST['duration_value'])) {
+            $errors['duration_err'] = 'Duration is required';
+        } else {
+            $duration_value = sanitize_input($_POST['duration_value']);
+        }
+
+        $duration_unit = $_POST['duration_unit'];
+
+        if (empty($_POST['description'])) {
+            $errors['description_err'] = 'Description is required';
+        } else {
+            $description = sanitize_input($_POST['description']);
+        }
+
+        if (empty($_POST['skills'])) {
+            $errors['skills_err'] = 'Preferred Skills is required';
+        } else {
+            $skills = sanitize_input($_POST['skills']);
+        }
+
+        if (empty($_POST['schedule'])) {
+            $errors['schedule_err'] = 'Schedule is required';
+        } else {
+            $schedule = sanitize_input($_POST['schedule']);
+        }
+
+        if (empty($_POST['payment_value'])) {
+            $errors['payment_err'] = 'Payment is required';
+        } else {
+            $payment_value = sanitize_input($_POST['payment_value']);
+        }
+
+        $payment_unit = $_POST['payment_unit'];
+
+        $gig_type = $_POST['gig_type'];
+
+        if ($gig_type != 'Remote' && empty($_POST['address'])) {
+            $errors['address_err'] = 'Address is required';
+        } else {
+            $address = sanitize_input($_POST['address']);
+        }
+
+        if (empty($errors)) {
+            // Enable exceptions for mysqli
+            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+            $expiration = date('Y-m-d H:i:s', strtotime('+10 days'));
+
+            try {                
+                $sql = 'UPDATE gigs SET title = ?, duration_value = ?, duration_unit = ?, description = ?, skills = ?, schedule = ?, payment_amount = ?, payment_unit = ?, gig_type = ?, address = ?, expiration = ? WHERE id = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ssssssssssss', $gig_title, $duration_value, $duration_unit, $description, $skills, $schedule, $payment_value, $payment_unit, $gig_type, $address, $expiration, $gig_id);
+                $stmt->execute();
+
+                $response['update_gig_success'] = true;
+            } catch (mysqli_sql_exception $e) {
+                $errors['db_err'] = 'There was problem in updating gig';
+                $response['success'] = false;
+                $response['errors'] = $errors;
+            } finally {
+                if (isset($stmt)) {
+                    $stmt->close();
+                }
+                $conn->close();
+            }
+        } else {
+            $response['update_gig_success'] = false;
+            $response['errors'] = $errors;
+        }
+    }
+
+    // Close Gig
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['close_gig'])) {
+        $response['sample'] = 'close gig!';
     }
 
     exit(json_encode($response));
