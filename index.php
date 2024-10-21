@@ -19,7 +19,7 @@
     </form>
 
     <div class="gig-list">
-        <a href="./gig-details?g=" class="gig-item">
+        <!-- <a href="./gig-details?g=" class="gig-item">
             <h3 class="gig-title">Online Tutor for High School Math (Flexible Hours)</h3>
             <p class="gig-type">Remote</p>
             <div>
@@ -31,23 +31,58 @@
                 <p>2 weeks</p>
             </div>
             <i class="ri-arrow-right-line"></i>
-        </a>
+        </a> -->
     </div>
 </div>
 
 <script>
+    const searchGigForm = document.querySelector('#search-gig-form');
     const gigList = document.querySelector('.gig-list');
-    for (let i = 0; i < 7; i++) {
-        const gigItem = document.querySelector('.gig-item').cloneNode(true);
-        if (i % 2 == 0) {
-            gigItem.querySelector('.gig-type').innerHTML = 'Onsite';
-            gigItem.querySelector('.gig-title').innerHTML = 'Graphic Designer Needed for Quick Logo Project';
-        }
-        if (i % 3 == 0) {
-            gigItem.querySelector('.gig-type').innerHTML = 'Hybrid';
-            gigItem.querySelector('.gig-title').innerHTML = 'Content Moderator for Online Community';
-        }
-        gigList.appendChild(gigItem);
+    
+    retrieveActiveGigs();
+
+    function retrieveActiveGigs() {
+        const searchQuery = getQueryParameter('search_gig') || '';
+        fetch(`./api/handle-index?search_query=${searchQuery}`)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                
+                if (data.success) {
+                    data.gigs.forEach(gig => {
+                        const gigItem = document.createElement('a');
+                        gigItem.setAttribute('href', `./gig-details?g=${gig.id}`);
+                        gigItem.setAttribute('class', 'gig-item');
+
+                        gigItem.innerHTML = `
+                            <h3 class="gig-title">${gig.title}</h3>
+                            <p class="gig-type">${gig.gig_type}</p>
+                            <div>
+                                <p>Payment</p>
+                                <p>${gig.payment_amount} per ${gig.payment_unit}</p>
+                            </div>
+                            <div>
+                                <p>Duration</p>
+                                <p>${gig.duration_value} ${gig.duration_unit}</p>
+                            </div>
+                            <i class="ri-arrow-right-line"></i>
+                        `;
+
+                        gigList.appendChild(gigItem);
+                    });
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    searchGigForm.addEventListener('submit', () => {
+        retrieveActiveGigs();
+    });
+
+    // ========================== GET QUERY PARAMETER ==========================
+    function getQueryParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
     }
 </script>
 
