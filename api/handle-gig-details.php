@@ -23,7 +23,7 @@
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
-            $sql = 'SELECT title, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address FROM gigs WHERE id = ? LIMIT 1';
+            $sql = 'SELECT title, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address, status FROM gigs WHERE id = ? LIMIT 1';
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('s', $gig_id);
             $stmt->execute();
@@ -128,7 +128,26 @@
 
     // Close Gig
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['close_gig'])) {
-        $response['sample'] = 'close gig!';
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+        try {
+            $sql = 'UPDATE gigs SET status = \'closed\' WHERE id = ?';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('s', $gig_id);
+            $stmt->execute();
+
+            $response['close_gig_success'] = true;
+            $response['url'] = './';
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'There was problem in closing gig';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
     }
 
     exit(json_encode($response));

@@ -93,7 +93,9 @@
                 <a id="view-applicants" href="./view-applicants?g=<?php echo $_GET['g']; ?>">View Applicants</a>
                 <button id="edit-btn" class="outline-btn" type="button">Edit</button>
                 <button id="close-gig-btn" class="outline-btn" type="button">Close Gig</button>
-            <?php } ?>     
+            <?php } ?>
+
+            <p id="gig-notice"></p>
         </div>
 
         <!-- Close Gig Modal -->
@@ -152,9 +154,8 @@
                     gigDetailsForm.querySelector('#schedule-display').innerHTML = data.gig.schedule;
                     gigDetailsForm.querySelector('#schedule').value = data.gig.schedule;
                     
-                    
                     // Payment information
-                    gigDetailsForm.querySelector('#payment-display').innerHTML = `${data.gig.payment_amount} per ${data.gig.payment_unit}`;
+                    gigDetailsForm.querySelector('#payment-display').innerHTML = `Php ${formatToPesos(data.gig.payment_amount)} per ${data.gig.payment_unit}`;
                     gigDetailsForm.querySelector('#payment-value').value = data.gig.payment_amount;
                     gigDetailsForm.querySelector('#payment-unit').value = data.gig.payment_unit;
 
@@ -165,6 +166,14 @@
                     // Address
                     gigDetailsForm.querySelector('#address-display').innerHTML = data.gig.address || '';
                     gigDetailsForm.querySelector('#address').value = data.gig.address || '';
+
+                    if (data.gig.status === 'active') {
+                        gigDetailsForm.querySelector('#edit-btn').style.display = 'block';
+                        gigDetailsForm.querySelector('#close-gig-btn').style.display = 'block';
+                    } else {
+                        gigNotice.innerHTML = data.gig.status === 'closed' ? 'This gig is closed.' : 'This gig has expired.';
+                        gigNotice.style.display = 'block';
+                    }
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -172,6 +181,7 @@
 
     // Gig Details Form - Actions
     const gigDetailsForm = document.querySelector('#gig-details-form');
+    const gigNotice = gigDetailsForm.querySelector('#gig-notice');
     
     gigDetailsForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -188,7 +198,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 gigDetailsForm.querySelector('#loader').style.display = 'none';
                 e.submitter.disabled = false;
 
@@ -218,6 +228,8 @@
                     retrieveGigDetails();
 
                     editBtn.innerHTML = 'Edit';
+                } else if (data.close_gig_success) {
+                    window.location.href = data.url;
                 }
 
                 gigDetailsForm.querySelector('#gig-title-err').innerHTML = data.errors?.gig_title_err || '';
@@ -338,6 +350,15 @@
     function autoResizeTextarea(textarea) {
         textarea.style.height = 'auto';
         textarea.style.height = textarea.scrollHeight + 'px';
+    }
+
+    // ========================== FORMAT MONEY AMOUNT (peso) ==========================
+    function formatToPesos(amount) {
+        let numericAmount = parseFloat(amount); // Convert string to number
+        if (isNaN(numericAmount)) {
+            return 'Invalid amount'; // Handle invalid numbers
+        }
+        return numericAmount.toLocaleString('en-PH');
     }
 
 </script>

@@ -49,7 +49,7 @@
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
-            $sql = 'SELECT id, title, gig_type, payment_amount, payment_unit, duration_value, duration_unit FROM gigs WHERE gig_creator = ? ORDER BY date_posted DESC';
+            $sql = 'SELECT id, title, gig_type, payment_amount, payment_unit, duration_value, duration_unit, status FROM gigs WHERE gig_creator = ? ORDER BY date_posted DESC';
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('s', $username);
             $stmt->execute();

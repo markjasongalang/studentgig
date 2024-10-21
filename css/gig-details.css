@@ -37,6 +37,14 @@ select.show {
     #address.show {
         display: block !important;
     }
+
+    #edit-btn {
+        display: none;
+    }
+
+    #close-gig-btn {
+        display: none;
+    }
 }
 
 .side {
@@ -62,5 +70,10 @@ select.show {
 
      #view-applicants:hover {
         background-color: var(--secondary-color);
+     }
+
+     #gig-notice {
+        display: none;
+        margin: 15px 0;
      }
 }

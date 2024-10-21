@@ -278,6 +278,7 @@
 
     // Retrieve Gigs
     const activeGigs = document.querySelector('.active-gigs');
+    const closedGigs = document.querySelector('.closed-gigs');
 
     retrieveGigs();
 
@@ -286,8 +287,6 @@
             .then(response => response.json())
             .then(data => {
                 // console.log(data);
-
-                // TODO: Separate Active and Closed Gigs
                 
                 if (data.success) {
                     data.gigs.forEach(gig => {
@@ -300,7 +299,7 @@
                             <p class="gig-type">${gig.gig_type}</p>
                             <div>
                                 <p>Payment</p>
-                                <p>${gig.payment_amount} per ${gig.payment_unit}</p>
+                                <p>${formatToPesos(gig.payment_amount)} per ${gig.payment_unit}</p>
                             </div>
                             <div>
                                 <p>Duration</p>
@@ -309,7 +308,11 @@
                             <i class="ri-arrow-right-line"></i>
                         `;
 
-                        activeGigs.appendChild(gigItem);
+                        if (gig.status === 'active') {
+                            activeGigs.appendChild(gigItem);
+                        } else {
+                            closedGigs.appendChild(gigItem);
+                        }
                     });
                 }
             })
@@ -347,6 +350,15 @@
     function getQueryParameter(name) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);
+    }
+
+    // ========================== FORMAT MONEY AMOUNT (peso) ==========================
+    function formatToPesos(amount) {
+        let numericAmount = parseFloat(amount); // Convert string to number
+        if (isNaN(numericAmount)) {
+            return 'Invalid amount'; // Handle invalid numbers
+        }
+        return numericAmount.toLocaleString('en-PH');
     }
 </script>
 
