@@ -21,8 +21,13 @@
         <!-- Profile Image -->
         <img id="profile-image" alt="Profile image">
         <form id="change-photo-form" method="POST">
-            <input id="profile-image-upload" type="file" accept="image/*">
-            <input id="save-profile-image" type="submit" value="Save">
+            <input type="hidden" id="user-id" name="user_id">
+            <input type="hidden" id="current-profile-image-path" name="current_profile_image_path">
+
+            <input name="profile_image_upload" id="profile-image-upload" type="file" accept="image/*">
+            <p id="profile-image-upload-err" class="input-help"></p>
+
+            <input name="save_profile_image" id="save-profile-image" type="submit" value="Save">
         </form>
         <button id="change-photo-btn" class="text-btn" type="button">Change photo</button>
 
@@ -140,8 +145,12 @@
                 // console.log(data);
                 
                 if (data.success) {
+                    // User ID
+                    changePhotoForm.querySelector('#user-id').value = data.student.id;
+
                     // Profile image
-                    document.querySelector('#profile-image').src = data.student.profile_image_path || './images/profile-image.png';
+                    document.querySelector('#profile-image').src = data.student.profile_image_path.slice(1) || './images/profile-image.png';
+                    changePhotoForm.querySelector('#current-profile-image-path').value = data.student.profile_image_path || '';
 
                     // Full Name
                     editProfileForm.querySelector('#student-full-name').innerHTML = `${data.student.first_name} ${data.student.last_name}`;
@@ -183,6 +192,8 @@
         } else {
             changePhotoForm.reset();
             changePhotoForm.style.display = 'none';
+
+            document.querySelector('#profile-image').src = changePhotoForm.querySelector('#current-profile-image-path').value.slice(1) || './images/profile-image.png';
             
             changePhotoBtn.innerHTML = 'Change photo';
         }
@@ -198,8 +209,36 @@
             };
             reader.readAsDataURL(file);
         } else {
-            profileImage.src = './images/profile-image.png';
+            profileImage.src = changePhotoForm.querySelector('#current-profile-image-path').value.slice(1) || './images/profile-image.png';
         }
+    });
+
+    changePhotoForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        fetch(`./api/handle-student-profile?u=${username}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                
+                if (data.success) {
+                    changePhotoForm.reset();
+                    changePhotoForm.style.display = 'none';
+
+                    retrieveStudent();
+                    
+                    changePhotoBtn.innerHTML = 'Change photo';
+                }
+
+                changePhotoForm.querySelector('#profile-image-upload-err').innerHTML = data.errors?.profile_image_upload_err || '';
+            })
+            .catch(error => console.error('Error:', error));
     });
 
     // Edit Profile
