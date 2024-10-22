@@ -81,25 +81,25 @@
         </ul>
 
         <div class="about-me">
-            <form method="POST">
+            <form id="about-me-form" method="POST">
                 <!-- Skills -->
                 <h3 class="input-label">SKILLS</h3>
-                <p class="content">Sample skills</p>
-                <textarea name="" id="" placeholder="Share your skills to everyone..."></textarea>
-                <p class="input-help"></p>
+                <p id="student-skills" class="content">Sample skills</p>
+                <textarea name="skills" id="skills" placeholder="Share your skills to everyone..."></textarea>
+                <p id="skills-err" class="input-help"></p>
                 
                 <!-- Work Experience -->
-                <h3 class="input-label">WORK EXPERIENCE</h3>
-                <p class="content">Sample work experience</p>
-                <textarea name="" id="" placeholder="This part is optional :)"></textarea>
+                <h3 id="work-exp-label" class="input-label">WORK EXPERIENCE</h3>
+                <p id="student-work-exp" class="content">Sample work experience</p>
+                <textarea name="work_exp" id="work-exp" placeholder="This is optional :)"></textarea>
                 
                 <!-- Certifications/Awards -->
-                <h3 class="input-label">CERTIFICATIONS/AWARDS</h3>
-                <p class="content">Sample certifications or awards</p>
-                <textarea name="" id="" placeholder="This part is optional as well :)"></textarea>
+                <h3 id="cert-label" class="input-label">CERTIFICATIONS/AWARDS</h3>
+                <p id="student-certs" class="content">Sample certifications or awards</p>
+                <textarea name="certs" id="certs" placeholder="This is optional as well :)"></textarea>
 
-                <input name="save_about_me" id="save-about-me" type="submit" value="Save">
-                <button id="edit-about-me" class="outline-btn" type="button">Edit About Me</button>
+                <input name="edit_about_me" id="edit-about-me" type="submit" value="Save">
+                <button id="edit-about-me-btn" class="outline-btn" type="button">Edit About Me</button>
             </form>
         </div>
 
@@ -338,7 +338,7 @@
         tabs[0].classList.add('active');
     });
 
-    document.querySelector('#edit-about-me').addEventListener('click', (e) => {
+    document.querySelector('#edit-about-me-btn').addEventListener('click', (e) => {
         if (e.target.innerHTML === 'Edit About Me') {
             document.querySelectorAll('textarea').forEach(textarea => {
                 textarea.style.display = 'block';
@@ -347,7 +347,7 @@
                 content.style.display = 'none';
             });
 
-            document.querySelector('#save-about-me').style.display = 'block';
+            document.querySelector('#edit-about-me').style.display = 'block';
             e.target.innerHTML = 'Cancel';
             e.target.setAttribute('class', 'text-btn');
             e.target.style.display = 'block';
@@ -360,11 +360,36 @@
                 textarea.style.display = 'none';
             });
 
-            document.querySelector('#save-about-me').style.display = 'none';
+            document.querySelector('#edit-about-me').style.display = 'none';
             e.target.innerHTML = 'Edit About Me';
             e.target.setAttribute('class', 'outline-btn');
             e.target.style.margin = '20px 0 0 0';
         }
+    });
+
+    const aboutMeForm = document.querySelector('#about-me-form');
+
+    aboutMeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        fetch(`./api/handle-student-profile?u=${username}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                
+                if (data.success) {
+                    
+                }
+
+                aboutMeForm.querySelector('#skills-err').innerHTML = data.errors?.skills_err || '';
+            })
+            .catch(error => console.error('Error:', error));
     });
     
     // Applied Gigs

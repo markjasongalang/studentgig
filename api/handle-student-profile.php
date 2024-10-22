@@ -5,6 +5,8 @@
 
     header('Content-Type: application/json');
 
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
     function sanitize_input($data) {
         $data = trim($data);
         $data = stripslashes($data);
@@ -19,8 +21,6 @@
 
     // Retrieve Student Details
     if ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($_GET['get_gigs'])) {
-        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
         try {
             $sql = 'SELECT id, email, first_name, last_name, university, year_level, degree_program, profile_image_path FROM students WHERE username = ? LIMIT 1';
             $stmt = $conn->prepare($sql);
@@ -36,10 +36,47 @@
             $response['success'] = false;
             $response['errors'] = $errors;
         } finally {
-            if (isset($stmt)) {
-                $stmt->close();
-            }
+            $stmt->close();
             $conn->close();
+        }
+    }
+
+    // Edit About Me
+    $skills = $work_exp = $certs = '';
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_about_me'])) {
+        if (empty($_POST['skills'])) {
+            $errors['skills_err'] = 'Skills are required';
+        } else {
+            $skills = sanitize_input($_POST['skills']);
+        }
+
+        if (!empty($_POST['work_exp'])) {
+            $work_exp = $_POST['work_exp'];
+        }
+
+        if (!empty($_POST['certs'])) {
+            $certs = $_POST['certs'];
+        }
+        
+        if (empty($errors)) {
+            try {
+                $sql = 'UPDATE students_about_me SET skills = ?, work_exp = ?, certifications = ? WHERE student = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ssss', $skills, $work_exp, $certs, $username);
+                $stmt->execute();
+                
+                $response['success'] = true;
+            } catch (mysqli_sql_exception $ex1) {
+                $errors['db_err'] = 'There was problem in editing about me';
+                $response['success'] = false;
+                $response['errors'] = $errors;
+            } finally {
+                $stmt->close();
+                $conn->close();
+            }
+        } else {
+            $response['success'] = false;
+            $response['errors'] = $errors;
         }
     }
 
@@ -53,8 +90,6 @@
         }
 
         if (empty($errors)) {
-            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
             try {
                 $profile_images_dir = '../uploads/students/profile-images/' . $user_id . '/';
                 if (!is_dir($profile_images_dir)) {
@@ -160,9 +195,6 @@
         }
 
         if (empty($errors)) {
-            // Enable exceptions for mysqli
-            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-
             try {
                 $sql = 'UPDATE students SET first_name = ?, last_name = ?, email = ?, university = ?, degree_program = ?, year_level = ? WHERE username = ?';
                 $stmt = $conn->prepare($sql);
