@@ -29,33 +29,34 @@
         <form id="edit-profile-form" method="POST">
             <!-- Student Name -->
             <h3 class="input-label">First name</h3>
-            <input type="text" placeholder="Enter first name">
-            <p class="input-help"></p>
+            <input name="first_name" id="first-name" type="text" placeholder="Enter first name">
+            <p id="first-name-err" class="input-help"></p>
             
             <h3 class="input-label">Last name</h3>
-            <input type="text" placeholder="Enter last name">
-            <p class="input-help"></p>
-            <h2 class="displayed">Mark Galang</h2>
+            <input name="last_name" id="last-name" type="text" placeholder="Enter last name">
+            <p id="last-name-err" class="input-help"></p>
+
+            <h2 id="student-full-name" class="displayed"></h2>
             
             <!-- University -->
             <h3 class="input-label">University</h3>
-            <input type="text" placeholder="Enter university">
-            <p class="input-help"></p>
-            <p class="displayed">FEU Tech</p>
+            <input name="university" id="university" type="text" placeholder="Enter university">
+            <p id="university-err" class="input-help"></p>
+            <p id="student-university" class="displayed"></p>
             
             <!-- Degree -->
             <h3 class="input-label">Degree Program</h3>
-            <input type="text" placeholder="Enter degree program">
-            <p class="input-help"></p>
-            <p class="displayed">Bachelor of Science in Computer Science with Specialization in Software Engineering</p>
+            <input name="degree" id="degree" type="text" placeholder="Enter degree program">
+            <p id="degree-err" class="input-help"></p>
+            <p id="student-degree" class="displayed"></p>
             
             <!-- Year Level -->
             <h3 class="input-label">Year Level</h3>
-            <input type="text" placeholder="Enter year level">
-            <p class="input-help"></p>
-            <p class="displayed">(2nd Year)</p>
+            <input name="year_level" id="year-level" type="text" placeholder="Enter year level">
+            <p id="year-level-err" class="input-help"></p>
+            <p id="student-year-level" class="displayed"></p>
 
-            <input type="submit" value="Update">
+            <input name="edit_profile" id="edit-profile" type="submit" value="Update">
         </form>
 
         <button id="edit-profile-btn" class="text-btn" type="button">Edit profile</button>
@@ -139,8 +140,25 @@
                 console.log(data);
                 
                 if (data.success) {
+                    // Profile image
                     document.querySelector('#profile-image').src = data.student.profile_image_path || './images/profile-image.png';
-                    // editProfileForm.
+
+                    // Full Name
+                    editProfileForm.querySelector('#student-full-name').innerHTML = `${data.student.first_name} ${data.student.last_name}`;
+                    editProfileForm.querySelector('#first-name').value = data.student.first_name;
+                    editProfileForm.querySelector('#last-name').value = data.student.last_name;
+
+                    // University
+                    editProfileForm.querySelector('#student-university').innerHTML = data.student.university;
+                    editProfileForm.querySelector('#university').value = data.student.university;
+
+                    // Degree Program
+                    editProfileForm.querySelector('#student-degree').innerHTML = data.student.degree_program;
+                    editProfileForm.querySelector('#degree').value = data.student.degree_program;
+
+                    // Year Level
+                    editProfileForm.querySelector('#student-year-level').innerHTML = data.student.year_level;
+                    editProfileForm.querySelector('#year-level').value = data.student.year_level;
                 }
             })
             .catch(error => console.error('Error:', error));
@@ -212,6 +230,27 @@
 
             editProfileBtn.innerHTML = 'Edit profile';
         }
+    });
+
+    editProfileForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        fetch(`./api/handle-student-profile?u=${username}`, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+
+                if (data.success) {
+                    
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 
     // ========================== MAIN  ==========================

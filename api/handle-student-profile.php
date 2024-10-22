@@ -43,6 +43,11 @@
         }
     }
 
+    // Edit Profile
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_profile'])) {
+        $response['sample'] = 'Edit profile!';
+    }
+
     // Retrieve gigs of student
     if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_gigs'])) {
         $response['sample'] = 'student gigs!';
