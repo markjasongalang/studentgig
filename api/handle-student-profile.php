@@ -43,9 +43,96 @@
         }
     }
 
+    // Change photo
+
+
     // Edit Profile
+    $first_name = $last_name = $email = $university = $degree = $year_level = '';
+    
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_profile'])) {
-        $response['sample'] = 'Edit profile!';
+        if (empty($_POST['first_name'])) {
+            $errors['first_name_err'] = 'First name is required';
+        } else {
+            $first_name = sanitize_input($_POST['first_name']);
+        }
+
+        if (empty($_POST['last_name'])) {
+            $errors['last_name_err'] = 'Last name is required';
+        } else {
+            $last_name = sanitize_input($_POST['last_name']);
+        }
+
+        if (empty($_POST['email'])) {
+            $errors['email_err'] = 'Email is required';
+        } else {
+            $email = sanitize_input($_POST['email']);
+
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $errors['email_err'] = 'Invalid email format';
+            } else {
+                $sql = 'SELECT username, email FROM students WHERE email = ?
+                        UNION
+                        SELECT username, email FROM gig_creators WHERE email = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ss', $email, $email);
+                if ($stmt->execute()) {
+                    $result = $stmt->get_result();
+                    while ($row = $result->fetch_assoc()) {
+                        if ($row['email'] === $email && $row['username'] != $username) {
+                            $errors['email_err'] = 'Email is already taken';
+                            break;
+                        }
+                    }
+                } else {
+                    $errors['email_err'] = 'There was a problem in verifying your email';
+                }
+                $stmt->close();
+            }
+        }
+
+        if (empty($_POST['university'])) {
+            $errors['university_err'] = 'University is required';
+        } else {
+            $university = sanitize_input($_POST['university']);
+        }
+
+        if (empty($_POST['degree'])) {
+            $errors['degree_err'] = 'Degree is required';
+        } else {
+            $degree = sanitize_input($_POST['degree']);
+        }
+
+        if (empty($_POST['year_level'])) {
+            $errors['year_level_err'] = 'Year level is required';
+        } else {
+            $year_level = sanitize_input($_POST['year_level']);
+        }
+
+        if (empty($errors)) {
+            // Enable exceptions for mysqli
+            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+            try {
+                $sql = 'UPDATE students SET first_name = ?, last_name = ?, email = ?, university = ?, degree_program = ?, year_level = ? WHERE username = ?';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('sssssss', $first_name, $last_name, $email, $university, $degree, $year_level, $username);
+                $stmt->execute();
+
+                $response['success'] = true;
+            } catch (mysqli_sql_exception $e) {
+                $errors['db_err'] = 'Couldn\'t update profile details';
+                $response['success'] = false;
+                $response['errors'] = $errors;
+            } finally {
+                if (isset($stmt)) {
+                    $stmt->close();
+                }
+                $conn->close();
+            }
+        } else {
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        }
     }
 
     // Retrieve gigs of student

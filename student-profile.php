@@ -37,6 +37,12 @@
             <p id="last-name-err" class="input-help"></p>
 
             <h2 id="student-full-name" class="displayed"></h2>
+
+            <!-- Email -->
+            <h3 class="input-label">Email</h3>
+            <input name="email" id="email" type="email" placeholder="Enter email">
+            <p id="email-err" class="input-help"></p>
+            <p id="student-email" class="displayed"></p>
             
             <!-- University -->
             <h3 class="input-label">University</h3>
@@ -86,12 +92,6 @@
                 <h3 class="input-label">CERTIFICATIONS/AWARDS</h3>
                 <p class="content">Sample certifications or awards</p>
                 <textarea name="" id="" placeholder="This part is optional as well :)"></textarea>
-                
-                <!-- Contact Information -->
-                <h3 class="input-label">Contact Information</h3>
-                <p class="content">sample@example.com</p>
-                <textarea name="" id="" placeholder="Enter contact details"></textarea>
-                <p class="input-help"></p>
 
                 <input name="save_about_me" id="save-about-me" type="submit" value="Save">
                 <button id="edit-about-me" class="outline-btn" type="button">Edit About Me</button>
@@ -137,7 +137,7 @@
         fetch(`./api/handle-student-profile?u=${username}`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 
                 if (data.success) {
                     // Profile image
@@ -147,6 +147,10 @@
                     editProfileForm.querySelector('#student-full-name').innerHTML = `${data.student.first_name} ${data.student.last_name}`;
                     editProfileForm.querySelector('#first-name').value = data.student.first_name;
                     editProfileForm.querySelector('#last-name').value = data.student.last_name;
+
+                    // Email
+                    editProfileForm.querySelector('#student-email').innerHTML = data.student.email;
+                    editProfileForm.querySelector('#email').value = data.student.email;
 
                     // University
                     editProfileForm.querySelector('#student-university').innerHTML = data.student.university;
@@ -244,11 +248,32 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
 
                 if (data.success) {
-                    
+                    editProfileForm.reset();
+
+                    retrieveStudent();
+
+                    document.querySelectorAll('.displayed').forEach(displayed => {
+                        displayed.style.display = 'block';
+                    });
+                    document.querySelectorAll('.left #edit-profile-form .input-label').forEach(inputLabel => {
+                        inputLabel.style.display = 'none';
+                    });
+                    document.querySelectorAll('.left #edit-profile-form input').forEach(input => {
+                        input.style.display = 'none';
+                    });
+
+                    editProfileBtn.innerHTML = 'Edit profile';
                 }
+
+                editProfileForm.querySelector('#first-name-err').innerHTML = data.errors?.first_name_err || '';
+                editProfileForm.querySelector('#last-name-err').innerHTML = data.errors?.last_name_err || '';
+                editProfileForm.querySelector('#email-err').innerHTML = data.errors?.email_err || '';
+                editProfileForm.querySelector('#university-err').innerHTML = data.errors?.university_err || '';
+                editProfileForm.querySelector('#degree-err').innerHTML = data.errors?.degree_err || '';
+                editProfileForm.querySelector('#year-level-err').innerHTML = data.errors?.year_level_err || '';
             })
             .catch(error => console.error('Error:', error));
     });
