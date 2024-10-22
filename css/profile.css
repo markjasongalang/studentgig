@@ -7,41 +7,41 @@
     flex-basis: 30%;
     padding: 0 20px;
     text-align: center;
+}
 
-    #profile-image {
-        width: 250px;
-        height: 250px;
-        border: 1px solid var(--special-gray);
-        border-radius: 100%;
-        object-fit: cover;
-    }
-    
-    #change-photo-form {
-        display: none;
-    }
-    
-    #change-photo-btn {
-        margin: 10px 0 20px 0;
-    }
-    
-    #save-profile-image {
-        margin-top: 5px;
-    }
-    
-    p {
-        font-size: 17px;
-        margin: 10px 0;
-    }
-    
-    .input-help {
-        font-size: 14px;
-        margin: 0;
-    }
-    
-    #edit-profile-form .input-label,
-    #edit-profile-form input {
-        display: none;
-    }
+.left #profile-image {
+    width: 250px;
+    height: 250px;
+    border: 1px solid var(--special-gray);
+    border-radius: 100%;
+    object-fit: cover;
+}
+
+.left #change-photo-form {
+    display: none;
+}
+
+.left #change-photo-btn {
+    margin: 10px 0 20px 0;
+}
+
+.left #save-profile-image {
+    margin-top: 5px;
+}
+
+.left p {
+    font-size: 17px;
+    margin: 10px 0;
+}
+
+.left .input-help {
+    font-size: 14px;
+    margin: 0;
+}
+
+.left #edit-profile-form .input-label,
+.left #edit-profile-form input {
+    display: none;
 }
 
 .main {
@@ -51,18 +51,18 @@
 .top-nav {
     list-style-type: none;
     border-bottom: 1px solid var(--special-gray);
+}
 
-    li {
-        display: inline-block;
-        margin-right: 40px;
-        padding: 0 10px 20px 10px;
-        cursor: pointer;
-    }
-    
-    li:hover,
-    li.active {
-        border-bottom: 1px solid var(--primary-color);
-    }
+.top-nav li {
+    display: inline-block;
+    margin-right: 40px;
+    padding: 0 10px 20px 10px;
+    cursor: pointer;
+}
+
+.top-nav li:hover,
+.top-nav li.active {
+    border-bottom: 1px solid var(--primary-color);
 }
 
 textarea {
@@ -73,23 +73,21 @@ textarea {
     display: none;
 }
 
-.gig-item {
-    &:hover {
-        border: none;
-    }
-    
-    button {
-        margin: 0;
-    }
-    
-    .with-actions {
-        padding: 0 10px;
-        text-align: center;
-    }
-    
-    .with-actions a {
-        color: var(--primary-color);
-    }
+.gig-item:hover {
+    border: none;
+}
+
+.gig-item button {
+    margin: 0;
+}
+
+.gig-item .with-actions {
+    padding: 0 10px;
+    text-align: center;
+}
+
+.gig-item .with-actions a {
+    color: var(--primary-color);
 }
 
 /* ------------------- Student (Profile) ------------------- */
@@ -109,17 +107,17 @@ textarea {
 /* ------------------- Gig Creator (Profile) ------------------- */
 .active-gigs {
     padding: 20px 0;
+}
 
-    .gig-item:hover {
-        border: 1px solid var(--primary-color);
-    }
+.active-gigs .gig-item:hover {
+    border: 1px solid var(--primary-color);
 }
 
 .closed-gigs {
     display: none;
     padding: 20px 0;
+}
 
-    .gig-item:hover {
-        border: 1px solid var(--primary-color);
-    }
+.closed-gigs .gig-item:hover {
+    border: 1px solid var(--primary-color);
 }
