@@ -20,7 +20,7 @@
     $errors = [];
 
     // Retrieve Student Details
-    if ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($_GET['get_gigs'])) {
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($_GET['get_gigs']) && !isset($_GET['get_about_me'])) {
         try {
             $sql = 'SELECT id, email, first_name, last_name, university, year_level, degree_program, profile_image_path FROM students WHERE username = ? LIMIT 1';
             $stmt = $conn->prepare($sql);
@@ -36,13 +36,36 @@
             $response['success'] = false;
             $response['errors'] = $errors;
         } finally {
-            $stmt->close();
+            if (isset($stmt)) {
+                $stmt->close();
+            }
             $conn->close();
         }
     }
 
     // Retrieve About Me
-    
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_about_me'])) {
+        try {
+            $sql = 'SELECT id, student, skills, work_exp, certifications FROM students_about_me WHERE student = ? LIMIT 1';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('s', $username);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+            $response['success'] = true;
+            $response['about_me'] = $row;
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'There was problem in retrieving about me';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
+    }
 
     // Edit About Me
     $skills = $work_exp = $certs = '';
@@ -74,7 +97,9 @@
                 $response['success'] = false;
                 $response['errors'] = $errors;
             } finally {
-                $stmt->close();
+                if (isset($stmt)) {
+                    $stmt->close();
+                }
                 $conn->close();
             }
         } else {

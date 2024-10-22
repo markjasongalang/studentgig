@@ -95,6 +95,11 @@ textarea {
     display: none;
 }
 
+.about-me #work-exp-label,
+.about-me #certs-label {
+    display: none;
+}
+
 .applied-gigs {
     padding: 20px 0;
 }

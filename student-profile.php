@@ -84,18 +84,18 @@
             <form id="about-me-form" method="POST">
                 <!-- Skills -->
                 <h3 class="input-label">SKILLS</h3>
-                <p id="student-skills" class="content">Sample skills</p>
+                <p id="student-skills" class="content"></p>
                 <textarea name="skills" id="skills" placeholder="Share your skills to everyone..."></textarea>
                 <p id="skills-err" class="input-help"></p>
                 
                 <!-- Work Experience -->
                 <h3 id="work-exp-label" class="input-label">WORK EXPERIENCE</h3>
-                <p id="student-work-exp" class="content">Sample work experience</p>
+                <p id="student-work-exp" class="content"></p>
                 <textarea name="work_exp" id="work-exp" placeholder="This is optional :)"></textarea>
                 
                 <!-- Certifications/Awards -->
-                <h3 id="cert-label" class="input-label">CERTIFICATIONS/AWARDS</h3>
-                <p id="student-certs" class="content">Sample certifications or awards</p>
+                <h3 id="certs-label" class="input-label">CERTIFICATIONS/AWARDS</h3>
+                <p id="student-certs" class="content"></p>
                 <textarea name="certs" id="certs" placeholder="This is optional as well :)"></textarea>
 
                 <input name="edit_about_me" id="edit-about-me" type="submit" value="Save">
@@ -268,8 +268,12 @@
             document.querySelectorAll('.left #edit-profile-form input').forEach(input => {
                 input.style.display = 'none';
             });
+
+            editProfileForm.querySelectorAll('.input-help').forEach(inputHelp => inputHelp.innerHTML = '');
             
             editProfileForm.reset();
+
+            retrieveStudent();
 
             editProfileBtn.innerHTML = 'Edit profile';
         }
@@ -338,20 +342,22 @@
         tabs[0].classList.add('active');
     });
 
-    document.querySelector('#edit-about-me-btn').addEventListener('click', (e) => {
+    const editAboutMeBtn = document.querySelector('#edit-about-me-btn');
+    editAboutMeBtn.addEventListener('click', (e) => {
         if (e.target.innerHTML === 'Edit About Me') {
             document.querySelectorAll('textarea').forEach(textarea => {
                 textarea.style.display = 'block';
+                autoResizeTextarea(textarea);
             });
             document.querySelectorAll('.content').forEach(content => {
                 content.style.display = 'none';
             });
 
             document.querySelector('#edit-about-me').style.display = 'block';
-            e.target.innerHTML = 'Cancel';
-            e.target.setAttribute('class', 'text-btn');
-            e.target.style.display = 'block';
-            e.target.style.margin = '10px auto';
+            editAboutMeBtn.innerHTML = 'Cancel';
+            editAboutMeBtn.setAttribute('class', 'text-btn');
+            editAboutMeBtn.style.display = 'block';
+            editAboutMeBtn.style.margin = '10px auto';
         } else {
             document.querySelectorAll('.content').forEach(content => {
                 content.style.display = 'block';
@@ -361,9 +367,9 @@
             });
 
             document.querySelector('#edit-about-me').style.display = 'none';
-            e.target.innerHTML = 'Edit About Me';
-            e.target.setAttribute('class', 'outline-btn');
-            e.target.style.margin = '20px 0 0 0';
+            editAboutMeBtn.innerHTML = 'Edit About Me';
+            editAboutMeBtn.setAttribute('class', 'outline-btn');
+            editAboutMeBtn.style.margin = '20px 0 0 0';
         }
     });
 
@@ -381,10 +387,24 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 
                 if (data.success) {
-                    
+                    aboutMeForm.reset();
+
+                    retrieveAboutMe();
+
+                    document.querySelectorAll('.content').forEach(content => {
+                        content.style.display = 'block';
+                    });
+                    document.querySelectorAll('textarea').forEach(textarea => {
+                        textarea.style.display = 'none';
+                    });
+
+                    document.querySelector('#edit-about-me').style.display = 'none';
+                    editAboutMeBtn.innerHTML = 'Edit About Me';
+                    editAboutMeBtn.setAttribute('class', 'outline-btn');
+                    editAboutMeBtn.style.margin = '20px 0 0 0';
                 }
 
                 aboutMeForm.querySelector('#skills-err').innerHTML = data.errors?.skills_err || '';
@@ -395,7 +415,33 @@
     retrieveAboutMe();
     
     function retrieveAboutMe() {
-        
+        fetch(`./api/handle-student-profile?u=${username}&get_about_me=true`)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+
+                if (data.success) {
+                    // Skills
+                    aboutMeForm.querySelector('#student-skills').innerHTML = data.about_me.skills;
+                    aboutMeForm.querySelector('#skills').value = data.about_me.skills;
+                    autoResizeTextarea(aboutMeForm.querySelector('#skills'));
+
+                    // Work Experience
+                    if (data.about_me.work_exp) {
+                        aboutMeForm.querySelector('#work-exp-label').style.display = 'block';
+                        aboutMeForm.querySelector('#student-work-exp').innerHTML = data.about_me.work_exp;
+                        aboutMeForm.querySelector('#work-exp').value = data.about_me.work_exp;
+                    }
+
+                    // Certifications
+                    if (data.about_me.certifications) {
+                        aboutMeForm.querySelector('#certs-label').style.display = 'block';
+                        aboutMeForm.querySelector('#student-certs').innerHTML = data.about_me.certifications;
+                        aboutMeForm.querySelector('#certs').value = data.about_me.certifications;
+                    }
+                }
+            })
+            .catch(error => console.error('Error:', error));
     }
     
     // Applied Gigs
@@ -413,6 +459,12 @@
         sections[2].style.display = 'block';
         tabs[2].classList.add('active');
     });
+
+    // AUTO-RESIZE TEXTAREAS
+    function autoResizeTextarea(textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+    }
 
     // GET QUERY PARAMETER
     function getQueryParameter(name) {
