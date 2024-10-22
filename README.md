@@ -12,3 +12,6 @@ By providing a variety of job types such as remote, onsite, and hybrid, StudentG
 - **PHPMailer:** For email functionality
 - **Composer:** Dependency management for PHP libraries
 - **Hostinger:** Web hosting provider
+
+## Creator/Founder
+**Mark Jason T. Galang:** Passionate about empowering students and helping them gain real-world experience through flexible work opportunities.

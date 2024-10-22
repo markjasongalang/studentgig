@@ -391,6 +391,12 @@
             })
             .catch(error => console.error('Error:', error));
     });
+
+    retrieveAboutMe();
+    
+    function retrieveAboutMe() {
+        
+    }
     
     // Applied Gigs
     tabs[1].addEventListener('click', () => {

@@ -41,6 +41,9 @@
         }
     }
 
+    // Retrieve About Me
+    
+
     // Edit About Me
     $skills = $work_exp = $certs = '';
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_about_me'])) {
