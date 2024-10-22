@@ -362,6 +362,10 @@ input[type=file] {
 .modal-body {
 	padding: 10px 16px;
     text-align: center;
+
+    p {
+        margin: 5px 0;
+    }
 }
 
 .modal-footer {

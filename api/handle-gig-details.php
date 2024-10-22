@@ -13,6 +13,9 @@
     }
 
     $gig_id = isset($_GET['g']) ? $_GET['g'] : "";
+    
+    $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
+    $role = isset($_SESSION['role']) ? $_SESSION['role'] : '';
 
     $response = [];
     $errors = [];
@@ -29,6 +32,18 @@
             $stmt->execute();
             $result = $stmt->get_result();
             $row = $result->fetch_assoc();
+
+            if ($role == 'student') {
+                $sql = 'SELECT gig_id, student FROM applicants WHERE gig_id = ? AND student = ? LIMIT 1';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ss', $gig_id, $username);
+                $stmt->execute();
+                
+                $result = $stmt->get_result();
+                if ($result->num_rows > 0) {
+                    $response['student_applied'] = true;
+                }
+            }
 
             $response['success'] = true;
             $response['gig'] = $row;
@@ -140,6 +155,29 @@
             $response['url'] = './';
         } catch (mysqli_sql_exception $e) {
             $errors['db_err'] = 'There was problem in closing gig';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
+    }
+
+    // Apply Gig
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['apply_gig'])) {
+        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);        
+
+        try {
+            $sql = 'INSERT INTO applicants (gig_id, student) VALUES (?, ?)';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('ss', $gig_id, $username);
+            $stmt->execute();
+
+            $response['apply_gig_success'] = true;
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'There was problem in applying to this gig';
             $response['success'] = false;
             $response['errors'] = $errors;
         } finally {

@@ -81,15 +81,32 @@
 
             <div id="loader"><div class="spinner"></div></div>
 
-            <?php if ($_SESSION['role'] != 'gig creator') { ?>
-                <input name="apply-gig" type="submit" value="Apply">
+            <!-- Apply Gig Modal -->
+            <div id="apply-gig-modal" class="modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <span class="close">&times;</span>
+                        <h2>Confirm Application</h2>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to apply for this gig?</p>
+                        <p>(Note: your profile will be sent to the gig creator)</p>
+                        <input name="apply_gig" id="apply-gig" type="submit" value="Yes, I want to apply">
+                    </div>
+                </div>
+            </div>
+
+            <?php if (!isset($_SESSION['role']) || (isset($_SESSION['role']) && $_SESSION['role'] == 'student')) { ?>
+                <input type="hidden" id="role" value="<?php echo isset($_SESSION['role']); ?>">
+                <button id="apply-gig-btn" type="button">Apply</button>
+                <p id="applied-preview">Applied</p>
             <?php } ?>
 
             <input name="update_gig" id="update-gig" type="submit" value="Update">
         </div>
 
         <div class="side">
-            <?php if ($_SESSION['role'] == 'gig creator') { ?>
+            <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'gig creator') { ?>
                 <a id="view-applicants" href="./view-applicants?g=<?php echo $_GET['g']; ?>">View Applicants</a>
                 <button id="edit-btn" class="outline-btn" type="button">Edit</button>
                 <button id="close-gig-btn" class="outline-btn" type="button">Close Gig</button>
@@ -115,6 +132,7 @@
                 </div> -->
             </div>
         </div>
+
     </form>
 </div>
 
@@ -167,12 +185,17 @@
                     gigDetailsForm.querySelector('#address-display').innerHTML = data.gig.address || '';
                     gigDetailsForm.querySelector('#address').value = data.gig.address || '';
 
-                    if (data.gig.status === 'active') {
+                    if (data.gig.status === 'active' && gigDetailsForm.querySelector('#edit-btn') && gigDetailsForm.querySelector('#close-gig-btn')) {
                         gigDetailsForm.querySelector('#edit-btn').style.display = 'block';
                         gigDetailsForm.querySelector('#close-gig-btn').style.display = 'block';
-                    } else {
+                    } else if (data.gig.status !== 'active') {
                         gigNotice.innerHTML = data.gig.status === 'closed' ? 'This gig is closed.' : 'This gig has expired.';
                         gigNotice.style.display = 'block';
+                    }
+
+                    if (data.student_applied) {
+                        gigDetailsForm.querySelector('#apply-gig-btn').style.display = 'none';
+                        gigDetailsForm.querySelector('#applied-preview').style.display = 'block';
                     }
                 }
             })
@@ -182,8 +205,9 @@
     // Gig Details Form - Actions
     const gigDetailsForm = document.querySelector('#gig-details-form');
     const gigNotice = gigDetailsForm.querySelector('#gig-notice');
+    const role = gigDetailsForm.querySelector('#role');
     
-    gigDetailsForm.addEventListener('submit', (e) => {
+    gigDetailsForm?.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const formData = new FormData(e.target);
@@ -228,8 +252,11 @@
                     retrieveGigDetails();
 
                     editBtn.innerHTML = 'Edit';
-                } else if (data.close_gig_success) {
+                } else if (data.close_gig_success) { // Close Gig
                     window.location.href = data.url;
+                } else if (data.apply_gig_success) { // Apply Gig
+                    applyGigModal.style.display = 'none';
+                    retrieveGigDetails();
                 }
 
                 gigDetailsForm.querySelector('#gig-title-err').innerHTML = data.errors?.gig_title_err || '';
@@ -244,7 +271,7 @@
     });
 
     // Gig Type Dropdown & Address
-    gigDetailsForm.querySelector('#gig-type').addEventListener('change', (e) => {
+    gigDetailsForm?.querySelector('#gig-type').addEventListener('change', (e) => {
         if (e.target.value === 'Remote') {
             gigDetailsForm.querySelector('#address').classList.remove('show');
         } else {
@@ -324,7 +351,7 @@
     const closeModalBtn = closeGigModal.querySelector('.close');
 
     // When the user clicks the button, open the modal 
-    closeGigBtn.addEventListener('click', () => {
+    closeGigBtn?.addEventListener('click', () => {
         closeGigModal.style.display = 'block';
     });
 
@@ -333,10 +360,32 @@
         closeGigModal.style.display = 'none';
     });
 
+    // ========================== APPLY GIG MODAL ==========================
+
+    const applyGigBtn = gigDetailsForm.querySelector('#apply-gig-btn');
+    const applyGigModal = gigDetailsForm.querySelector('#apply-gig-modal');
+    const closeApplyModalBtn = applyGigModal.querySelector('.close');
+
+    applyGigBtn?.addEventListener('click', () => {
+        // Must be logged in as a Student before applying
+        if (role && role.value != 1) {
+            window.location.href = './login';
+            return;
+        }
+
+        applyGigModal.style.display = 'block';
+    });
+    closeApplyModalBtn.addEventListener('click', () => {
+        applyGigModal.style.display = 'none';
+    });
+
     // When the user clicks anywhere outside of the modal, close it
     document.addEventListener('click', (e) => {
         if (e.target === closeGigModal) {
             closeGigModal.style.display = 'none';
+        }
+        if (e.target === applyGigModal) {
+            applyGigModal.style.display = 'none';
         }
     });
 
