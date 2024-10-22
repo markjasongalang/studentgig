@@ -1,13 +1,25 @@
 <?php
+    $url_username = isset($_GET['u']) ? $_GET['u'] : '';
+
     $title = 'Student Profile';
     $css_file_name = 'profile';
     include './partials/header.php';
+
+    if (empty($url_username)) {
+        if ($_SESSION['username']) {
+            $_GET['u'] = $_SESSION['username'];
+            header('Location: ./student-profile' . '?' . http_build_query($_GET));
+        } else {
+            header('Location: ./login');
+            exit;
+        }
+    }
 ?>
 
 <div class="container">
     <div class="left">
         <!-- Profile Image -->
-        <img id="profile-image" src="./images/profile-image.png" alt="Profile image">
+        <img id="profile-image" alt="Profile image">
         <form id="change-photo-form" method="POST">
             <input id="profile-image-upload" type="file" accept="image/*">
             <input id="save-profile-image" type="submit" value="Save">
@@ -19,6 +31,7 @@
             <h3 class="input-label">First name</h3>
             <input type="text" placeholder="Enter first name">
             <p class="input-help"></p>
+            
             <h3 class="input-label">Last name</h3>
             <input type="text" placeholder="Enter last name">
             <p class="input-help"></p>
@@ -85,7 +98,6 @@
         </div>
 
         <div class="applied-gigs">
-            <h1>Applied gigs</h1>
             <div class="gig-item">
                 <h3 class="gig-title">English Tutor</h3>
                 <p class="gig-type">Remote</p>
@@ -100,7 +112,6 @@
         </div>
 
         <div class="hired-gigs">
-            <h1>Hired gigs</h1>
             <div class="gig-item">
                 <h3 class="gig-title">English Tutor</h3>
                 <p class="gig-type">Remote</p>
@@ -117,7 +128,26 @@
 </div>
 
 <script>
+    const username = getQueryParameter('u');
+
+    retrieveStudent();
+
+    function retrieveStudent() {
+        fetch(`./api/handle-student-profile?u=${username}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                
+                if (data.success) {
+                    document.querySelector('#profile-image').src = data.student.profile_image_path || './images/profile-image.png';
+                    // editProfileForm.
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     // ========================== SIDE ==========================
+
     // Change Photo
     const changePhotoBtn = document.querySelector('#change-photo-btn');
     const profileImage = document.querySelector('#profile-image');
@@ -249,6 +279,12 @@
         sections[2].style.display = 'block';
         tabs[2].classList.add('active');
     });
+
+    // GET QUERY PARAMETER
+    function getQueryParameter(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
 </script>
 
 <?php
