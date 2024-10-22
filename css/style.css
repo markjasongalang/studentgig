@@ -4,8 +4,8 @@
     --primary-color: #243642;
     --secondary-color: #387478;
     --tertiary-color: #629584;
-    --extra-color: #E2F1E7;
-    --special-gray: #D6D6D6;
+    --extra-color: #e2f1e7;
+    --special-gray: #d6d6d6;
 }
 
 * {
@@ -14,13 +14,19 @@
     box-sizing: border-box;
 }
 
-body, input, button, textarea, select {
+body,
+input,
+button,
+textarea,
+select {
     /* Weight: 100 – 1000 */
     font-family: "DM Sans", serif;
     font-optical-sizing: auto;
 }
 
-img, input[type=submit], button {
+img,
+input[type=submit],
+button {
     user-select: none;
 }
 
@@ -90,11 +96,11 @@ nav #logout-btn {
     margin: 0 !important;
     padding: 5px 15px !important;
     text-decoration: none;
+}
 
-    &:hover {
-        color: var(--extra-color) !important;
-        background-color: var(--secondary-color) !important;
-    }
+nav #logout-btn:hover {
+    color: var(--extra-color) !important;
+    background-color: var(--secondary-color) !important;
 }
 
 .container {
@@ -107,7 +113,9 @@ nav #logout-btn {
     margin-top: 15px;
 }
 
-input, select, button {
+input,
+select,
+button {
     width: 100%;
     margin: 7px 0;
     padding: 10px 20px;
@@ -138,7 +146,8 @@ textarea {
     border: 1px solid var(--special-gray);
 }
 
-input:focus, textarea:focus {
+input:focus,
+textarea:focus {
     border: 1px solid var(--primary-color);
 }
 
@@ -148,13 +157,15 @@ input:focus, textarea:focus {
     margin-left: 5px;
 }
 
-.short-input, .short-select {
+.short-input,
+.short-select {
     width: auto;
     display: inline-block;
     vertical-align: middle;
 }
 
-input[type=submit], button {
+input[type=submit],
+button {
     margin-top: 20px;
     border: none;
     background: none;
@@ -164,10 +175,9 @@ input[type=submit], button {
     transition: background-color 0.3s ease;
 }
 
-input[type=submit], button {
-    &:hover {
-        background-color: var(--secondary-color);
-    }
+input[type=submit]:hover,
+button:hover {
+    background-color: var(--secondary-color);
 }
 
 input[type=file] {
@@ -185,12 +195,12 @@ input[type=file] {
     background-color: white !important;
     color: var(--primary-color) !important;
     border: 1px solid var(--primary-color) !important;
+}
 
-    &:hover {
-        border: none !important;
-        background-color: var(--secondary-color) !important;
-        color: var(--extra-color) !important;
-    }
+.outline-btn:hover {
+    border: none !important;
+    background-color: var(--secondary-color) !important;
+    color: var(--extra-color) !important;
 }
 
 .text-btn {
@@ -210,11 +220,11 @@ input[type=file] {
     margin-top: 0;
     font-size: 15px;
     color: var(--secondary-color);
+}
 
-    &:hover {
-        background: none !important;
-        color: var(--primary-color);
-    }
+.back-btn:hover {
+    background: none !important;
+    color: var(--primary-color);
 }
 
 .gig-item {
@@ -228,24 +238,26 @@ input[type=file] {
     border-radius: 60px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     margin-bottom: 15px;
+}
 
-    &:hover {
-        border: 1px solid var(--primary-color);
-    }
+.gig-item:hover {
+    border: 1px solid var(--primary-color);
+}
 
-    h3, p, div {
-        flex: 1;
-        text-align: center;
-    }
+.gig-item h3,
+.gig-item p,
+.gig-item div {
+    flex: 1;
+    text-align: center;
+}
 
-    .gig-title {
-        color: var(--primary-color);
-        text-align: left;
-    }
+.gig-item .gig-title {
+    color: var(--primary-color);
+    text-align: left;
+}
 
-    i {
-        color: var(--primary-color);
-    }
+.gig-item i {
+    color: var(--primary-color);
 }
 
 /* ---------------------------- SPINNER ---------------------------- */
@@ -261,117 +273,122 @@ input[type=file] {
     width: 30px;
     height: 30px;
     animation: spin 1s linear infinite;
-    margin:  0 auto;
+    margin: 0 auto;
 }
-  
+
 @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
 
 /* ============================= Modal ============================= */
 /* The Modal (background) */
 .modal {
-	display: none;
-	/* Hidden by default */
-	position: fixed;
-	/* Stay in place */
-	z-index: 1;
-	/* Sit on top */
-	padding-top: 40vh;
-	/* Location of the box */
-	left: 0;
-	top: 0;
-	width: 100%;
-	/* Full width */
-	height: 100%;
-	/* Full height */
-	overflow: auto;
-	/* Enable scroll if needed */
-	background-color: rgb(0, 0, 0);
-	/* Fallback color */
-	background-color: rgba(0, 0, 0, 0.4);
-	/* Black w/ opacity */
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Stay in place */
+    z-index: 1;
+    /* Sit on top */
+    padding-top: 40vh;
+    /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%;
+    /* Full width */
+    height: 100%;
+    /* Full height */
+    overflow: auto;
+    /* Enable scroll if needed */
+    background-color: #000;
+    /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Black w/ opacity */
 }
 
 /* Modal Content */
 .modal-content {
     border-radius: 20px;
-	position: relative;
-	background-color: #fefefe;
-	margin: auto;
-	padding: 0;
-	border: 1px solid #888;
-	width: 50%;
-	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-	-webkit-animation-name: animatetop;
-	-webkit-animation-duration: 0.4s;
-	animation-name: animatetop;
-	animation-duration: 0.4s
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 50%;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s;
 }
 
 /* Add Animation */
 @-webkit-keyframes animatetop {
-	from {
+    from {
         top: -300px;
-		opacity: 0
-	}
+        opacity: 0;
+    }
 
-	to {
-		top: 0;
-		opacity: 1
-	}
+    to {
+        top: 0;
+        opacity: 1;
+    }
 }
 
 @keyframes animatetop {
-	from {
-		top: -300px;
-		opacity: 0
-	}
+    from {
+        top: -300px;
+        opacity: 0;
+    }
 
-	to {
-		top: 0;
-		opacity: 1
-	}
+    to {
+        top: 0;
+        opacity: 1;
+    }
 }
 
 /* The Close Button */
 .close {
-	color: var(--extra-color);
-	float: right;
-	font-size: 28px;
-	font-weight: bold;
+    color: var(--extra-color);
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
     transition: color 0.3s ease;
 }
 
 .close:hover,
 .close:focus {
-	color: var(--primary-color);
-	text-decoration: none;
-	cursor: pointer;
+    color: var(--primary-color);
+    text-decoration: none;
+    cursor: pointer;
 }
 
 .modal-header {
-	padding: 10px 16px;
-	background-color: var(--secondary-color);
-	color: white;
+    padding: 10px 16px;
+    background-color: var(--secondary-color);
+    color: white;
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
 }
 
 .modal-body {
-	padding: 10px 16px;
+    padding: 10px 16px;
     text-align: center;
+}
 
-    p {
-        margin: 5px 0;
-    }
+.modal-body p {
+    margin: 5px 0;
 }
 
 .modal-footer {
-	padding: 10px 16px;
-	background-color: var(--secondary-color);
-	color: white;
+    padding: 10px 16px;
+    background-color: var(--secondary-color);
+    color: white;
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
 }

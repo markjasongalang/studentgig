@@ -1,5 +1,4 @@
-#post-gig-form {
-    #address { 
+#post-gig-form #address { 
         display: none;
     }
 }

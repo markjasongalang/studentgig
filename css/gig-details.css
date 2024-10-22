@@ -12,7 +12,7 @@
 }
 
 input[type=text],
-input[type=number], 
+input[type=number],
 textarea {
     display: none;
 }
@@ -29,64 +29,62 @@ select.show {
     display: inline-block !important;
 }
 
-#gig-details-form {
-    #address {
-        display: none !important;
-    }
+#gig-details-form #address {
+    display: none !important;
+}
 
-    #address.show {
-        display: block !important;
-    }
+#gig-details-form #address.show {
+    display: block !important;
+}
 
-    #edit-btn {
-        display: none;
-    }
+#gig-details-form #edit-btn {
+    display: none;
+}
 
-    #close-gig-btn {
-        display: none;
-    }
+#gig-details-form #close-gig-btn {
+    display: none;
+}
 
-    #applied-preview {
-        display: none;
-        width: 100%;
-        margin: 20px 0 7px 0;
-        padding: 10px 20px;
-        font-size: 15px;
-        border-radius: 60px;
-        outline: none;
-        text-align: center;
-        color: var(--extra-color);
-        background-color: var(--tertiary-color);
-    }
+#gig-details-form #applied-preview {
+    display: none;
+    width: 100%;
+    margin: 20px 0 7px 0;
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 60px;
+    outline: none;
+    text-align: center;
+    color: var(--extra-color);
+    background-color: var(--tertiary-color);
 }
 
 .side {
     flex-basis: 30%;
     text-align: center;
+}
 
-     #view-applicants {
-        text-decoration: none;
-        display: block;
-        width: 100%;
-        padding: 10px 20px;
-        font-size: 15px;
-        border-radius: 60px;
-        outline: none;
-        margin-top: 20px;
-        border: none;
-        background: none;
-        cursor: pointer;
-        color: var(--extra-color);
-        background-color: var(--primary-color);
-        transition: background-color 0.3s ease;
-     }
+.side #view-applicants {
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 60px;
+    outline: none;
+    margin-top: 20px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    color: var(--extra-color);
+    background-color: var(--primary-color);
+    transition: background-color 0.3s ease;
+}
 
-     #view-applicants:hover {
-        background-color: var(--secondary-color);
-     }
+.side #view-applicants:hover {
+    background-color: var(--secondary-color);
+}
 
-     #gig-notice {
-        display: none;
-        margin: 15px 0;
-     }
+.side #gig-notice {
+    display: none;
+    margin: 15px 0;
 }
