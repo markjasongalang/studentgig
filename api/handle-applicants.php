@@ -14,7 +14,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_applicants'])) {
         try {
-            $sql = 'SELECT s.first_name, s.last_name, s.university, a.status, a.student
+            $sql = 'SELECT s.first_name, s.last_name, s.university, a.status, a.gig_id, a.student
                     FROM applicants a
                     INNER JOIN students s ON s.username = a.student
                     WHERE a.gig_id = ?

@@ -9,6 +9,26 @@
     }
 ?>
 
+<!-- Applicant Modal -->
+<div id="applicant-modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+            <h2>Confirm Invitation</h2>
+        </div>
+        <div class="modal-body">
+            <p>By sending this invitation, you are offering this student the opportunity to be hired for the gig. Once accepted, the gig will be assigned to them.</p>
+            <form id="invite-applicant-form" method="POST">
+                <input name="gig_id" id="gig-id" type="hidden">
+                <input name="student" id="student" type="hidden">
+
+                <input name="invite_applicant" id="invite-applicant" type="submit" value="Yes, I want to invite this student for this gig">
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <button type="button" class="back-btn"><i class="ri-arrow-left-fill"></i> Back</button>
 
@@ -30,17 +50,30 @@
 <script>
     const gigId = getQueryParameter('g');
 
-    const container = document.querySelector('.container');
+    // ========================== APPLICANT MODAL ==========================
+    const applicantModal = document.querySelector('#applicant-modal');
+    const closeApplicantModalBtn = applicantModal.querySelector('.close');
+
+    closeApplicantModalBtn.addEventListener('click', () => {
+        applicantModal.style.display = 'none';
+    });
+
+    // Shared
+    document.addEventListener('click', (e) => {
+        if (e.target === applicantModal) {
+            applicantModal.style.display = 'none';
+        }
+    });
 
     // Get gig post applicants
-
+    const container = document.querySelector('.container');
     retrieveApplicants();
 
     function retrieveApplicants() {
         fetch(`./api/handle-applicants?g=${gigId}&get_applicants=true`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 
                 if (data.success) {
                     data.applicants.forEach(applicant => {
@@ -55,17 +88,34 @@
                             <div>
                                 <a href="./student-profile?u=${applicant.student}" target="_blank">View</a>
                                 <button class="outline-btn" type="button">Message</button>
-                                <button type="button">Invite to Hire</button>
-                                <button type="button">Invited</button>
-                                <button type="button">Student Accepted</button>
+                                <button id="invite-to-hire-btn" type="button">Invite to Hire</button>
+                                <p>Invited</p>
+                                <p>Student Accepted</p>
                             </div>
                         `;
+                        
+                        applicantItem.querySelector('#invite-to-hire-btn').addEventListener('click', () => {
+                            applicantModal.style.display = 'block';
+                            applicantModal.querySelector('#gig-id').value = applicant.gig_id;
+                            applicantModal.querySelector('#student').value = applicant.student;
+                        });
+
                         container.appendChild(applicantItem);
                     });
                 }
             })
             .catch(error => console.error('Error:', error));
     }
+
+    // Invite Applicant
+    applicantModal.querySelector('#invite-applicant-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        console.log(formData.get('gig_id'));
+        console.log(formData.get('student'));
+        
+    });
 
     // GET QUERY PARAMETER
     function getQueryParameter(name) {
