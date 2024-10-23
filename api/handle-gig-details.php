@@ -12,7 +12,7 @@
         return $data;
     }
 
-    $gig_id = isset($_GET['g']) ? $_GET['g'] : "";
+    $gig_id = isset($_GET['g']) ? $_GET['g'] : '';
     
     $username = isset($_SESSION['username']) ? $_SESSION['username'] : '';
     $role = isset($_SESSION['role']) ? $_SESSION['role'] : '';

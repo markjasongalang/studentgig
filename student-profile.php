@@ -6,7 +6,7 @@
     include './partials/header.php';
 
     if (empty($url_username)) {
-        if ($_SESSION['username']) {
+        if ($_SESSION['username'] && $_SESSION['role'] == 'student') {
             $_GET['u'] = $_SESSION['username'];
             header('Location: ./student-profile' . '?' . http_build_query($_GET));
         } else {
@@ -29,7 +29,10 @@
 
             <input name="save_profile_image" id="save-profile-image" type="submit" value="Save">
         </form>
-        <button id="change-photo-btn" class="text-btn" type="button">Change photo</button>
+
+        <?php if ($_SESSION['username'] == $_GET['u']) { ?>
+            <button id="change-photo-btn" class="text-btn" type="button">Change photo</button>
+        <?php } ?>
 
         <form id="edit-profile-form" method="POST">
             <!-- Student Name -->
@@ -69,8 +72,10 @@
 
             <input name="edit_profile" id="edit-profile" type="submit" value="Update">
         </form>
-
-        <button id="edit-profile-btn" class="text-btn" type="button">Edit profile</button>
+        
+        <?php if ($_SESSION['username'] == $_GET['u']) { ?>
+            <button id="edit-profile-btn" class="text-btn" type="button">Edit profile</button>
+        <?php } ?>
     </div>
 
     <div class="main">
@@ -99,7 +104,10 @@
                 <textarea name="certs" id="certs" placeholder="This is optional as well :)"></textarea>
 
                 <input name="edit_about_me" id="edit-about-me" type="submit" value="Save">
-                <button id="edit-about-me-btn" class="outline-btn" type="button">Edit About Me</button>
+
+                <?php if ($_SESSION['username'] == $_GET['u']) { ?>
+                    <button id="edit-about-me-btn" class="outline-btn" type="button">Edit About Me</button>
+                <?php } ?>
             </form>
         </div>
 
@@ -149,7 +157,7 @@
                     changePhotoForm.querySelector('#user-id').value = data.student.id;
 
                     // Profile image
-                    document.querySelector('#profile-image').src = data.student.profile_image_path.slice(1) || './images/profile-image.png';
+                    document.querySelector('#profile-image').src = data.student.profile_image_path?.slice(1) || './images/profile-image.png';
                     changePhotoForm.querySelector('#current-profile-image-path').value = data.student.profile_image_path || '';
 
                     // Full Name
@@ -184,7 +192,7 @@
     const profileImage = document.querySelector('#profile-image');
     const changePhotoForm = document.querySelector('#change-photo-form');
 
-    changePhotoBtn.addEventListener('click', () => {
+    changePhotoBtn?.addEventListener('click', () => {
         if (changePhotoBtn.innerHTML === 'Change photo') {
             changePhotoForm.style.display = 'block';
             
@@ -245,7 +253,7 @@
     const editProfileBtn = document.querySelector('#edit-profile-btn');
     const editProfileForm = document.querySelector('#edit-profile-form');
 
-    editProfileBtn.addEventListener('click', () => {
+    editProfileBtn?.addEventListener('click', () => {
         if (editProfileBtn.innerHTML == 'Edit profile') {
             document.querySelectorAll('.left #edit-profile-form .input-label').forEach(inputLabel => {
                 inputLabel.style.display = 'block';
@@ -346,8 +354,11 @@
     });
 
     const editAboutMeBtn = document.querySelector('#edit-about-me-btn');
-    editAboutMeBtn.addEventListener('click', (e) => {
+    editAboutMeBtn?.addEventListener('click', (e) => {
         if (e.target.innerHTML === 'Edit About Me') {
+            aboutMeForm.querySelector('#work-exp-label').style.display = 'block';
+            aboutMeForm.querySelector('#certs-label').style.display = 'block';
+
             document.querySelectorAll('textarea').forEach(textarea => {
                 textarea.style.display = 'block';
                 autoResizeTextarea(textarea);
@@ -362,12 +373,17 @@
             editAboutMeBtn.style.display = 'block';
             editAboutMeBtn.style.margin = '10px auto';
         } else {
+            aboutMeForm.querySelector('#work-exp-label').style.display = 'none';
+            aboutMeForm.querySelector('#certs-label').style.display = 'none';
+
             document.querySelectorAll('.content').forEach(content => {
                 content.style.display = 'block';
             });
             document.querySelectorAll('textarea').forEach(textarea => {
                 textarea.style.display = 'none';
             });
+
+            retrieveAboutMe();
 
             document.querySelector('#edit-about-me').style.display = 'none';
             editAboutMeBtn.innerHTML = 'Edit About Me';
@@ -434,6 +450,8 @@
                         aboutMeForm.querySelector('#work-exp-label').style.display = 'block';
                         aboutMeForm.querySelector('#student-work-exp').innerHTML = data.about_me.work_exp;
                         aboutMeForm.querySelector('#work-exp').value = data.about_me.work_exp;
+                    } else {
+                        aboutMeForm.querySelector('#work-exp-label').style.display = 'none';
                     }
 
                     // Certifications
@@ -441,6 +459,8 @@
                         aboutMeForm.querySelector('#certs-label').style.display = 'block';
                         aboutMeForm.querySelector('#student-certs').innerHTML = data.about_me.certifications;
                         aboutMeForm.querySelector('#certs').value = data.about_me.certifications;
+                    } else {
+                        aboutMeForm.querySelector('#certs-label').style.display = 'none';
                     }
                 }
             })
