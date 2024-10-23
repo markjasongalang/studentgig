@@ -9,10 +9,14 @@
         if ($_SESSION['username']) {
             $_GET['u'] = $_SESSION['username'];
             header('Location: ./gig-creator-profile' . '?' . http_build_query($_GET));
+            exit;
         } else {
             header('Location: ./login');
             exit;
         }
+    } else if ($url_username != $_SESSION['username']) {
+        header('Location: ./login');
+        exit;
     }
 ?>
 

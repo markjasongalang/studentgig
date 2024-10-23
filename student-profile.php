@@ -9,10 +9,14 @@
         if ($_SESSION['username'] && $_SESSION['role'] == 'student') {
             $_GET['u'] = $_SESSION['username'];
             header('Location: ./student-profile' . '?' . http_build_query($_GET));
+            exit;
         } else {
             header('Location: ./login');
             exit;
         }
+    } else if (!isset($_SESSION['username']) || ($_SESSION['role'] == 'student' && $url_username != $_SESSION['username'])) {
+        header('Location: ./login');
+        exit;
     }
 ?>
 
@@ -51,7 +55,7 @@
             <input name="save_profile_image" id="save-profile-image" type="submit" value="Save">
         </form>
 
-        <?php if ($_SESSION['username'] == $_GET['u']) { ?>
+        <?php if (isset($_SESSION['username']) && $_SESSION['username'] == $_GET['u']) { ?>
             <button id="change-photo-btn" class="text-btn" type="button">Change photo</button>
         <?php } ?>
 
@@ -94,7 +98,7 @@
             <input name="edit_profile" id="edit-profile" type="submit" value="Update">
         </form>
         
-        <?php if ($_SESSION['username'] == $_GET['u']) { ?>
+        <?php if (isset($_SESSION['username']) && $_SESSION['username'] == $_GET['u']) { ?>
             <button id="edit-profile-btn" class="text-btn" type="button">Edit profile</button>
         <?php } ?>
     </div>
@@ -126,7 +130,7 @@
 
                 <input name="edit_about_me" id="edit-about-me" type="submit" value="Save">
 
-                <?php if ($_SESSION['username'] == $_GET['u']) { ?>
+                <?php if (isset($_SESSION['username']) && $_SESSION['username'] == $_GET['u']) { ?>
                     <button id="edit-about-me-btn" class="outline-btn" type="button">Edit About Me</button>
                 <?php } ?>
             </form>
