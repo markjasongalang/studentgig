@@ -111,9 +111,9 @@ textarea {
 }
 
 /* ------------------- Student (Profile) ------------------- */
-.about-me {
+/* .about-me {
     display: none;
-}
+} */
 
 .about-me #work-exp-label,
 .about-me #certs-label {
@@ -121,6 +121,7 @@ textarea {
 }
 
 .applied-gigs {
+    display: none;
     padding: 20px 0;
 }
 

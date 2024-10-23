@@ -105,8 +105,8 @@
 
     <div class="main">
         <ul class="top-nav">
-            <li id="about-me-tab">About Me</li>
-            <li id="applied-gigs-tab" class="active">Applied Gigs</li>
+            <li id="about-me-tab" class="active">About Me</li>
+            <li id="applied-gigs-tab">Applied Gigs</li>
             <li id="hired-gigs-tab">Hired Gigs</li>
         </ul>
 
@@ -408,6 +408,10 @@
                 textarea.style.display = 'none';
             });
 
+            aboutMeForm.querySelectorAll('.input-help').forEach(inputHelp => {
+                inputHelp.innerHTML = '';
+            });
+
             retrieveAboutMe();
 
             document.querySelector('#edit-about-me').style.display = 'none';
@@ -477,6 +481,7 @@
                         aboutMeForm.querySelector('#work-exp').value = data.about_me.work_exp;
                     } else {
                         aboutMeForm.querySelector('#work-exp-label').style.display = 'none';
+                        aboutMeForm.querySelector('#student-work-exp').innerHTML = '';
                     }
 
                     // Certifications
@@ -486,6 +491,7 @@
                         aboutMeForm.querySelector('#certs').value = data.about_me.certifications;
                     } else {
                         aboutMeForm.querySelector('#certs-label').style.display = 'none';
+                        aboutMeForm.querySelector('#student-certs').innerHTML = '';
                     }
                 }
             })
