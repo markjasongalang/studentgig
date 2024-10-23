@@ -106,7 +106,9 @@
     <div class="main">
         <ul class="top-nav">
             <li id="about-me-tab" class="active">About Me</li>
-            <li id="applied-gigs-tab">Applied Gigs</li>
+            <?php if (isset($_SESSION['username']) && $_SESSION['username'] == $_GET['u']) { ?>
+                <li id="applied-gigs-tab">Applied Gigs</li>
+            <?php } ?>
             <li id="hired-gigs-tab">Hired Gigs</li>
         </ul>
 
@@ -373,7 +375,11 @@
     // About Me
     tabs[0].addEventListener('click', () => {
         sections.forEach(section => section.style.display = 'none');
-        tabs.forEach(tab => tab.classList.remove('active'));
+        tabs.forEach(tab => {
+            if (tab) {
+                tab.classList.remove('active')
+            }
+        });
         sections[0].style.display = 'block';
         tabs[0].classList.add('active');
     });
@@ -597,7 +603,7 @@
     });
     
     // Applied Gigs
-    tabs[1].addEventListener('click', () => {
+    tabs[1]?.addEventListener('click', () => {
         sections.forEach(section => section.style.display = 'none');
         tabs.forEach(tab => tab.classList.remove('active'));
         sections[1].style.display = 'block';
@@ -607,7 +613,11 @@
     // Hired Gigs
     tabs[2].addEventListener('click', () => {
         sections.forEach(section => section.style.display = 'none');
-        tabs.forEach(tab => tab.classList.remove('active'));
+        tabs.forEach(tab => {
+            if (tab) {
+                tab.classList.remove('active')
+            }
+        });
         sections[2].style.display = 'block';
         tabs[2].classList.add('active');
     });
