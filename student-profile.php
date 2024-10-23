@@ -104,7 +104,7 @@
         </div>
 
         <div class="applied-gigs">
-            <div class="gig-item">
+            <!-- <div class="gig-item">
                 <h3 class="gig-title">English Tutor</h3>
                 <p class="gig-type">Remote</p>
                 <p>420 per hour</p>
@@ -114,11 +114,11 @@
                 <div class="with-actions">
                     <button>Message</button>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <div class="hired-gigs">
-            <div class="gig-item">
+            <!-- <div class="gig-item">
                 <h3 class="gig-title">English Tutor</h3>
                 <p class="gig-type">Remote</p>
                 <p>420 per hour</p>
@@ -128,7 +128,7 @@
                 <div class="with-actions">
                     <button>Message</button>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>
@@ -328,10 +328,13 @@
         document.querySelector('#hired-gigs-tab')
     ];
 
+    const appliedGigs = document.querySelector('.applied-gigs');
+    const hiredGigs = document.querySelector('.hired-gigs');
+
     const sections = [
         document.querySelector('.about-me'),
-        document.querySelector('.applied-gigs'),
-        document.querySelector('.hired-gigs')
+        appliedGigs,
+        hiredGigs
     ];
 
     // About Me
@@ -439,6 +442,46 @@
                         aboutMeForm.querySelector('#student-certs').innerHTML = data.about_me.certifications;
                         aboutMeForm.querySelector('#certs').value = data.about_me.certifications;
                     }
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Retrieve gigs of Student
+
+    retrieveStudentGigs();
+
+    function retrieveStudentGigs() {
+        fetch(`./api/handle-student-profile?u=${username}&get_gigs=true`)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                
+                if (data.success) {
+                    data.gigs.forEach(gig => {
+                        const gigItem = document.createElement('div');
+                        gigItem.classList.add('gig-item');
+                        
+                        gigItem.innerHTML = `
+                            <h3 class="gig-title">${gig.title}</h3>
+                            
+                            <div class="with-actions">
+                                <a href="./gig-details?g=${gig.gig_id}">View</a>
+                            </div>
+                            <div class="with-actions">
+                                <button class="outline-btn">Open Message</button>
+                            </div>
+                            <div class="with-actions">
+                                <button>Accept Offer</button>
+                            </div>
+                        `;
+
+                        if (gig.status === 'hired') {
+                            // TODO: hired gigs
+                        } else {
+                            appliedGigs.appendChild(gigItem);
+                        }
+                    });
                 }
             })
             .catch(error => console.error('Error:', error));

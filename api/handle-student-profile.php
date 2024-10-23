@@ -246,9 +246,38 @@
         }
     }
 
-    // Retrieve gigs of student
+    // Retrieve applied & hired gigs of student
+
     if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_gigs'])) {
-        $response['sample'] = 'student gigs!';
+        try {
+            $sql = 'SELECT a.id, a.gig_id, a.status, g.title, g.gig_type
+                    FROM applicants a
+                    INNER JOIN gigs g ON g.id = a.gig_id
+                    WHERE a.student = ?
+                    ORDER BY a.date_applied DESC';
+
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('s', $username);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+            $gigs = [];
+            while ($row = $result->fetch_assoc()) {
+                $gigs[] = $row;
+            }
+
+            $response['success'] = true;
+            $response['gigs'] = $gigs;
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'Couldn\'t retrieve gigs of student';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
     }
 
     exit(json_encode($response));

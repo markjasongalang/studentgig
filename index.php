@@ -59,7 +59,7 @@
                             <p class="gig-type">${gig.gig_type}</p>
                             <div>
                                 <p>Payment</p>
-                                <p>${gig.payment_amount} per ${gig.payment_unit}</p>
+                                <p>Php ${formatToPesos(gig.payment_amount)} per ${gig.payment_unit}</p>
                             </div>
                             <div>
                                 <p>Duration</p>
@@ -83,6 +83,15 @@
     function getQueryParameter(name) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);
+    }
+
+    // FORMAT MONEY AMOUNT 
+    function formatToPesos(amount) {
+        let numericAmount = parseFloat(amount);
+        if (isNaN(numericAmount)) {
+            return 'Invalid amount';
+        }
+        return numericAmount.toLocaleString('en-PH');
     }
 </script>
 
