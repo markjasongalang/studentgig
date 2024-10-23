@@ -44,5 +44,28 @@
         }
     }
 
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['invite_applicant'])) {
+        $gig_id = $_POST['gig_id'];
+        $student = $_POST['student'];
+
+        try {
+            $sql = "UPDATE applicants SET status = 'Invited' WHERE gig_id = ? AND student = ? LIMIT 1";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('ss', $gig_id, $student);
+            $stmt->execute();
+            
+            $response['success'] = true;
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'Couldn\'t invite applicant';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
+    }
+
     exit(json_encode($response));
 ?>

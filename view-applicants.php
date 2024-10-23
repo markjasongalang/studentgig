@@ -3,7 +3,7 @@
     $css_file_name = 'view-applicants';
     include './partials/header.php';
 
-    if (!isset($_GET['g'])) {
+    if (!isset($_GET['g']) || ($_GET['u'] != $_SESSION['username'])) {
         header('Location: ./');
         exit;
     }
@@ -32,19 +32,21 @@
 <div class="container">
     <button type="button" class="back-btn"><i class="ri-arrow-left-fill"></i> Back</button>
 
-    <!-- <div class="applicant-item">
-        <div>
-            <h3 class="applicant-name">Mark Jason</h3>
-        </div>
-        <p>FEU Institute of Technology</p>
-        <div>
-            <a href="./student-profile?u=" target="_blank">View</a>
-            <button class="outline-btn" type="button">Message</button>
-            <button type="button">Invite to Hire</button>
-            <button type="button">Invited</button>
-            <button type="button">Student Accepted</button>
-        </div>
-    </div> -->
+    <div class="applicant-list">
+        <!-- <div class="applicant-item">
+            <div>
+                <h3 class="applicant-name">Mark Jason</h3>
+            </div>
+            <p>FEU Institute of Technology</p>
+            <div>
+                <a href="./student-profile?u=" target="_blank">View</a>
+                <button class="outline-btn" type="button">Message</button>
+                <button type="button">Invite to Hire</button>
+                <button type="button">Invited</button>
+                <button type="button">Student Accepted</button>
+            </div>
+        </div> -->
+    </div>
 </div>
 
 <script>
@@ -66,14 +68,16 @@
     });
 
     // Get gig post applicants
-    const container = document.querySelector('.container');
+    const applicantList = document.querySelector('.applicant-list');
     retrieveApplicants();
 
     function retrieveApplicants() {
+        applicantList.innerHTML = '';
+
         fetch(`./api/handle-applicants?g=${gigId}&get_applicants=true`)
             .then(response => response.json())
             .then(data => {
-                // console.log(data);
+                console.log(data);
                 
                 if (data.success) {
                     data.applicants.forEach(applicant => {
@@ -89,10 +93,16 @@
                                 <a href="./student-profile?u=${applicant.student}" target="_blank">View</a>
                                 <button class="outline-btn" type="button">Message</button>
                                 <button id="invite-to-hire-btn" type="button">Invite to Hire</button>
-                                <p>Invited</p>
-                                <p>Student Accepted</p>
+                                <p id="status-preview" class="disabled-preview"></p>
+                                <p id="accepted-preview" class="disabled-preview">Student Accepted</p>
                             </div>
                         `;
+
+                        if (applicant.status !== 'pending') {
+                            applicantItem.querySelector('#invite-to-hire-btn').style.display = 'none';
+                            applicantItem.querySelector('#status-preview').innerHTML = applicant.status;
+                            applicantItem.querySelector('#status-preview').style.display = 'inline-block';
+                        }
                         
                         applicantItem.querySelector('#invite-to-hire-btn').addEventListener('click', () => {
                             applicantModal.style.display = 'block';
@@ -100,7 +110,7 @@
                             applicantModal.querySelector('#student').value = applicant.student;
                         });
 
-                        container.appendChild(applicantItem);
+                        applicantList.appendChild(applicantItem);
                     });
                 }
             })
@@ -108,13 +118,27 @@
     }
 
     // Invite Applicant
-    applicantModal.querySelector('#invite-applicant-form').addEventListener('submit', (e) => {
+    const inviteApplicantForm = applicantModal.querySelector('#invite-applicant-form');
+    inviteApplicantForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
         const formData = new FormData(e.target);
-        console.log(formData.get('gig_id'));
-        console.log(formData.get('student'));
+        formData.append(e.submitter.name, true);
         
+        fetch('./api/handle-applicants', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                
+                if (data.success) {
+                    applicantModal.style.display = 'none';
+                    retrieveApplicants();
+                }
+            })
+            .catch(error => console.error('Error:', error));
     });
 
     // GET QUERY PARAMETER

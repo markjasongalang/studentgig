@@ -10,6 +10,10 @@
 	margin-bottom: 15px;
 }
 
+.applicant-item * {
+	flex: 1;
+}
+
 .applicant-item:hover {
 	border: none;
 }
@@ -26,4 +30,9 @@
 
 .applicant-item .applicant-name {
 	color: var(--primary-color);
+}
+
+.disabled-preview {
+	width: fit-content;
+	margin: 0 15px;
 }

@@ -45,19 +45,6 @@ select.show {
     display: none;
 }
 
-#gig-details-form #applied-preview {
-    display: none;
-    width: 100%;
-    margin: 20px 0 7px 0;
-    padding: 10px 20px;
-    font-size: 15px;
-    border-radius: 60px;
-    outline: none;
-    text-align: center;
-    color: var(--extra-color);
-    background-color: var(--tertiary-color);
-}
-
 .side {
     flex-basis: 30%;
     text-align: center;

@@ -99,7 +99,7 @@
             <?php if (!isset($_SESSION['role']) || (isset($_SESSION['role']) && $_SESSION['role'] == 'student')) { ?>
                 <input type="hidden" id="role" value="<?php echo isset($_SESSION['role']); ?>">
                 <button id="apply-gig-btn" type="button">Apply</button>
-                <p id="applied-preview">Applied</p>
+                <p id="applied-preview" class="disabled-preview">Applied</p>
             <?php } ?>
 
             <input name="update_gig" id="update-gig" type="submit" value="Update">
@@ -107,7 +107,7 @@
 
         <div class="side">
             <?php if (isset($_SESSION['role']) && $_SESSION['role'] == 'gig creator') { ?>
-                <a id="view-applicants" href="./view-applicants?g=<?php echo $_GET['g']; ?>">View Applicants</a>
+                <a id="view-applicants" href="./view-applicants?g=<?php echo $_GET['g']; ?>&u=<?php echo $_SESSION['username']; ?>">View Applicants</a>
                 <button id="edit-btn" class="outline-btn" type="button">Edit</button>
                 <button id="close-gig-btn" class="outline-btn" type="button">Close Gig</button>
             <?php } ?>
