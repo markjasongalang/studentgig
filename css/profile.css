@@ -73,12 +73,19 @@ textarea {
     display: none;
 }
 
+/* .gig-item * {
+    flex: 1;
+} */
+
 .gig-item:hover {
     border: none;
 }
 
-.gig-item button {
-    margin: 0;
+.gig-item button,
+#pending-preview,
+#accepted-preview {
+    margin: 0 15px;
+    width: auto;
 }
 
 .gig-item .with-actions {
@@ -88,6 +95,19 @@ textarea {
 
 .gig-item .with-actions a {
     color: var(--primary-color);
+}
+
+.gig-item #accept-invite-btn {
+    display: none;
+}
+
+.gig-item #accepted-preview {
+    display: none;
+    background-color: var(--secondary-color);
+}
+
+.gig-item #view-chat-btn {
+    display: none;
 }
 
 /* ------------------- Student (Profile) ------------------- */

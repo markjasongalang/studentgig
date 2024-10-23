@@ -98,10 +98,13 @@
                             </div>
                         `;
 
-                        if (applicant.status !== 'pending') {
+                        if (applicant.status !== 'Pending') {
                             applicantItem.querySelector('#invite-to-hire-btn').style.display = 'none';
                             applicantItem.querySelector('#status-preview').innerHTML = applicant.status;
                             applicantItem.querySelector('#status-preview').style.display = 'inline-block';
+                            if (applicant.status === 'Accepted') {
+                                applicantItem.querySelector('#status-preview').style.backgroundColor = 'var(--secondary-color)';
+                            }
                         }
                         
                         applicantItem.querySelector('#invite-to-hire-btn').addEventListener('click', () => {

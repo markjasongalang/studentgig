@@ -250,7 +250,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_gigs'])) {
         try {
-            $sql = 'SELECT a.id, a.gig_id, a.status, g.title, g.gig_type
+            $sql = 'SELECT a.id, a.gig_id, a.student, a.status, g.title, g.gig_type
                     FROM applicants a
                     INNER JOIN gigs g ON g.id = a.gig_id
                     WHERE a.student = ?
@@ -270,6 +270,30 @@
             $response['gigs'] = $gigs;
         } catch (mysqli_sql_exception $e) {
             $errors['db_err'] = 'Couldn\'t retrieve gigs of student';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
+    }
+
+    // Accept Invite
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['accept_invite'])) {
+        $gig_id = $_POST['gig_id'];
+        $student = $_POST['student'];
+
+        try {
+            $sql = "UPDATE applicants SET status = 'Accepted' WHERE gig_id = ? AND student = ? LIMIT 1";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('ss', $gig_id, $student);
+            $stmt->execute();
+            
+            $response['success'] = true;
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'Couldn\'t accept invite';
             $response['success'] = false;
             $response['errors'] = $errors;
         } finally {

@@ -16,6 +16,27 @@
     }
 ?>
 
+<!-- Accept Invite Modal -->
+<div id="accept-invite-modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+            <h2>Accept Invitation to Be Hired</h2>
+        </div>
+        <div class="modal-body">
+            <p></p>
+            <form id="accept-invite-form" method="POST">
+                <input name="gig_id" id="gig-id" type="hidden">
+                <input name="student" id="student" type="hidden">
+
+                <p>You have been invited to work on this gig. By accepting, you confirm that you are ready to start the job as described.</p>
+                <input name="accept_invite" id="accept-invite" type="submit" value="Accept Invitation">
+            </form>
+        </div>
+    </div>
+</div>
+
 <div class="container">
     <div class="left">
         <!-- Profile Image -->
@@ -472,6 +493,9 @@
     retrieveStudentGigs();
 
     function retrieveStudentGigs() {
+        appliedGigs.innerHTML = '';
+        hiredGigs.innerHTML = '';
+
         fetch(`./api/handle-student-profile?u=${username}&get_gigs=true`)
             .then(response => response.json())
             .then(data => {
@@ -484,20 +508,35 @@
                         
                         gigItem.innerHTML = `
                             <h3 class="gig-title">${gig.title}</h3>
-                            
                             <div class="with-actions">
-                                <a href="./gig-details?g=${gig.gig_id}">View</a>
+                                <a href="./gig-details?g=${gig.gig_id}">Details</a>
                             </div>
-                            <div class="with-actions">
-                                <button class="outline-btn">Open Message</button>
+                            <div>
+                                <p id="pending-preview" class="disabled-preview">Pending</p>
+                                <button id="accept-invite-btn">Accept Invite</button>
+                                <p id="accepted-preview" class="disabled-preview">Accepted</p>
                             </div>
-                            <div class="with-actions">
-                                <button>Accept Offer</button>
+                            <div>
+                                <button id="view-chat-btn" class="outline-btn">View Chat</button>
                             </div>
                         `;
 
-                        if (gig.status === 'hired') {
-                            // TODO: hired gigs
+                        if (gig.status === 'Invited') {
+                            gigItem.querySelector('#accept-invite-btn').style.display = 'block';
+
+                            gigItem.querySelector('#accept-invite-btn').addEventListener('click', () => {
+                                acceptInviteModal.style.display = 'block';
+                                acceptInviteModal.querySelector('#gig-id').value = gig.gig_id;
+                                acceptInviteModal.querySelector('#student').value = gig.student;
+                            });
+                        } else if (gig.status === 'Accepted') {
+                            gigItem.querySelector('#accepted-preview').style.display = 'block';
+                        } else {
+                            gigItem.querySelector('#pending-preview').style.display = 'block';
+                        }
+
+                        if (gig.status === 'Accepted') {
+                            hiredGigs.appendChild(gigItem);
                         } else {
                             appliedGigs.appendChild(gigItem);
                         }
@@ -506,6 +545,46 @@
             })
             .catch(error => console.error('Error:', error));
     }
+
+    // ========================== ACCEPT INVITE MODAL ==========================
+    const acceptInviteModal = document.querySelector('#accept-invite-modal');
+    const closeAcceptInviteModalBtn = acceptInviteModal.querySelector('.close');
+
+    closeAcceptInviteModalBtn.addEventListener('click', () => {
+        acceptInviteModal.style.display = 'none';
+    });
+
+    // Shared
+    document.addEventListener('click', (e) => {
+        if (e.target === acceptInviteModal) {
+            acceptInviteModal.style.display = 'none';
+        }
+    });
+
+    // Accept Invite Form
+    const acceptInviteForm = acceptInviteModal.querySelector('#accept-invite-form');
+
+    acceptInviteForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        fetch('./api/handle-student-profile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                
+                if (data.success) {
+                    acceptInviteModal.style.display = 'none';
+                    retrieveStudentGigs();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    });
     
     // Applied Gigs
     tabs[1].addEventListener('click', () => {
