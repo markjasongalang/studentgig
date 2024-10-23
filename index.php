@@ -1,6 +1,6 @@
 <?php
-    $title = "Find gigs for students <3";
-    $css_file_name = "index";
+    $title = 'Explore Student-Friendly Gigs!';
+    $css_file_name = 'index';
     include './partials/header.php';
 
     if (isset($_SESSION['username']) && isset($_SESSION['role']) && $_SESSION['role'] == 'gig creator') {
