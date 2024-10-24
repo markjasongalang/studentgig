@@ -24,6 +24,7 @@
             <form id="chat-form" method="POST">
                 <input name="gig_creator" id="gig-creator" type="hidden">
                 <input name="student" id="student" type="hidden">
+                <input name="gig_id" id="gig-id" type="hidden">
 
                 <!-- <textarea name="message" id="message" placeholder="Write a message..."></textarea> -->
                 <input name="message" id="message" placeholder="Write a message..." type="text">
@@ -138,6 +139,7 @@
                             </div>
                         `;
 
+                        // Status
                         if (applicant.status !== 'Pending') {
                             applicantItem.querySelector('#invite-to-hire-btn').style.display = 'none';
                             applicantItem.querySelector('#status-preview').innerHTML = applicant.status;
@@ -147,16 +149,19 @@
                             }
                         }
                         
+                        // Invite to Hire
                         applicantItem.querySelector('#invite-to-hire-btn').addEventListener('click', () => {
                             applicantModal.style.display = 'block';
                             applicantModal.querySelector('#gig-id').value = applicant.gig_id;
                             applicantModal.querySelector('#student').value = applicant.student;
                         });
 
+                        // View Chat
                         applicantItem.querySelector('#view-chat-btn').addEventListener('click', () => {
                             chatModal.style.display = 'block';
                             chatModal.querySelector('#gig-creator').value = gigCreator;
                             chatModal.querySelector('#student').value = applicant.student;
+                            chatModal.querySelector('#gig-id').value = gigId;
 
                             retrieveMessagesWithApplicant();
                         });
@@ -200,7 +205,7 @@
         chatModal.querySelector('.message-list').innerHTML = '';
         lastMessageTimestamp = '';
         messagesInterval = setInterval(() => {
-            fetch(`./api/handle-applicants?get_messages=true&last_timestamp=${lastMessageTimestamp}&gig_creator=${gigCreator}&student=${chatModal.querySelector('#student').value}`)
+            fetch(`./api/handle-applicants?get_messages=true&last_timestamp=${lastMessageTimestamp}&gig_creator=${gigCreator}&student=${chatModal.querySelector('#student').value}&gig_id=${gigId}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log(data);

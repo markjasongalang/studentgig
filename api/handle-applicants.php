@@ -97,6 +97,7 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_message'])) {
         $gig_creator = $_POST['gig_creator'];
         $student = $_POST['student'];
+        $gig_id = $_POST['gig_id'];
 
         if (empty($_POST['message'])) {
             $errors['message_err'] = '*Please type something first';
@@ -107,18 +108,18 @@
         if (empty($errors)) {
             try {
                 // Find and/or create chat record
-                $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? LIMIT 1';
+                $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? AND gig_id = ? LIMIT 1';
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param('ss', $student, $gig_creator);
+                $stmt->bind_param('ssi', $student, $gig_creator, $gig_id);
                 $stmt->execute();
                 
                 $result = $stmt->get_result();
     
                 if ($result->num_rows == 0) {
                     $chat_id = generate_uuid();
-                    $sql = 'INSERT INTO chats (id, student, gig_creator) VALUES (?, ?, ?)';
+                    $sql = 'INSERT INTO chats (id, student, gig_creator, gig_id) VALUES (?, ?, ?, ?)';
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param('sss', $chat_id, $student, $gig_creator);
+                    $stmt->bind_param('sssi', $chat_id, $student, $gig_creator, $gig_id);
                     $stmt->execute();
                 } else {
                     $row = $result->fetch_assoc();
@@ -153,30 +154,33 @@
         $gig_creator = $_GET['gig_creator'];
         $student = $_GET['student'];
         $last_timestamp = isset($_GET['last_timestamp']) ? $_GET['last_timestamp'] : '1970-01-01 00:00:00'; // default to start of Unix time
+        $gig_id = $_GET['gig_id'];
 
         try {
-            $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? LIMIT 1';
+            $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? AND gig_id = ? LIMIT 1';
             $stmt = $conn->prepare($sql);
-            $stmt->bind_param('ss', $student, $gig_creator);
+            $stmt->bind_param('ssi', $student, $gig_creator, $gig_id);
             $stmt->execute();
             $result = $stmt->get_result();
-            $row = $result->fetch_assoc();
-            $chat_id = $row['id'];
+            
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $chat_id = $row['id'];
+    
+                $sql = 'SELECT sender, message, sent_at FROM messages WHERE chat_id = ? AND sent_at > ? ORDER BY sent_at ASC';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ss', $chat_id, $last_timestamp);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $messages = [];
+    
+                while ($row = $result->fetch_assoc()) {
+                    $messages[] = $row;
+                }
 
-            $sql = 'SELECT sender, message, sent_at FROM messages WHERE chat_id = ? AND sent_at > ? ORDER BY sent_at ASC';
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('ss', $chat_id, $last_timestamp);
-            $stmt->execute();
-            $result = $stmt->get_result();
-            $messages = [];
-
-            while ($row = $result->fetch_assoc()) {
-                $messages[] = $row;
+                $response['success'] = true;
+                $response['messages'] = $messages;
             }
-
-            $response['success'] = true;
-            $response['messages'] = $messages;
-            $response['last_timestamp'] = $last_timestamp;
         } catch (mysqli_sql_exception $e) {
             $errors['db_err'] = 'Couldn\'t retrieve messages';
             $response['success'] = false;
