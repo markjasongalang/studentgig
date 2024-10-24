@@ -73,6 +73,21 @@ textarea {
     display: none;
 }
 
+/* ------------------- Student (Profile) ------------------- */
+/* .about-me {
+    display: none;
+} */
+
+.about-me #work-exp-label,
+.about-me #certs-label {
+    display: none;
+}
+
+.applied-gigs {
+    display: none;
+    padding: 20px 0;
+}
+
 /* .gig-item * {
     flex: 1;
 } */
@@ -107,22 +122,7 @@ textarea {
 }
 
 .gig-item #view-chat-btn {
-    display: none;
-}
-
-/* ------------------- Student (Profile) ------------------- */
-/* .about-me {
-    display: none;
-} */
-
-.about-me #work-exp-label,
-.about-me #certs-label {
-    display: none;
-}
-
-.applied-gigs {
-    display: none;
-    padding: 20px 0;
+    /* display: none; */
 }
 
 .hired-gigs {
@@ -146,4 +146,31 @@ textarea {
 
 .closed-gigs .gig-item:hover {
     border: 1px solid var(--primary-color);
+}
+
+/* ================================= Modal ================================= */
+#chat-modal {
+	padding-top: 20vh;
+}
+
+#chat-modal .modal-footer #message {
+	min-height: 60px;
+}
+
+#chat-modal .modal-footer #send-message {
+	margin: 0;
+}
+
+#chat-modal .modal-footer #send-message:hover {
+	background-color: var(--tertiary-color);
+}
+
+#chat-modal #message-err {
+	margin: 0 0 10px 0;
+	color: var(--extra-color);
+}
+
+#chat-modal .message-list {
+	height: 300px;
+	overflow-y: auto;
 }

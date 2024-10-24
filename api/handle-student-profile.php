@@ -14,6 +14,20 @@
         return $data;
     }
 
+    function generate_uuid() {
+        return sprintf(
+            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0x0fff) | 0x4000,
+            mt_rand(0, 0x3fff) | 0x8000,
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff),
+            mt_rand(0, 0xffff)
+        );
+    }
+
     $username = isset($_GET['u']) ? $_GET['u'] : '';
 
     $response = [];
@@ -250,7 +264,7 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_gigs'])) {
         try {
-            $sql = 'SELECT a.id, a.gig_id, a.student, a.status, g.title, g.gig_type
+            $sql = 'SELECT a.id, a.gig_id, a.student, a.status, g.title, g.gig_type, g.gig_creator
                     FROM applicants a
                     INNER JOIN gigs g ON g.id = a.gig_id
                     WHERE a.student = ?
@@ -294,6 +308,97 @@
             $response['success'] = true;
         } catch (mysqli_sql_exception $e) {
             $errors['db_err'] = 'Couldn\'t accept invite';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
+    }
+
+    // Chat (send messages)
+    $message = '';
+
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['send_message'])) {
+        $student = $_POST['student'];
+        $gig_creator = $_POST['gig_creator'];
+        $gig_id = $_POST['gig_id'];
+
+        if (empty($_POST['message'])) {
+            $errors['message_err'] = '*Please type something first';
+        } else {
+            $message = sanitize_input($_POST['message']);
+        }
+
+        if (empty($errors)) {
+            // Find and/or create chat record
+            $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? AND gig_id = ? LIMIT 1';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('ssi', $student, $gig_creator, $gig_id);
+            $stmt->execute();
+            
+            $result = $stmt->get_result();
+
+            if ($result->num_rows == 0) {
+                $chat_id = generate_uuid();
+                $sql = 'INSERT INTO chats (id, student, gig_creator, gig_id) VALUES (?, ?, ?, ?)';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('sssi', $chat_id, $student, $gig_creator, $gig_id);
+                $stmt->execute();
+            } else {
+                $row = $result->fetch_assoc();
+                $chat_id = $row['id'];
+            }
+
+            // Send message
+            $sql = 'INSERT INTO messages (chat_id, sender, message) VALUES (?, ?, ?)';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('sss', $chat_id, $student, $message);
+            $stmt->execute();
+            
+            $response['success'] = true;
+        } else {
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        }
+    }
+
+    // Chat (get messages)
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_messages'])) {
+        $gig_creator = $_GET['gig_creator'];
+        $student = $_GET['student'];
+        $last_timestamp = isset($_GET['last_timestamp']) ? $_GET['last_timestamp'] : '1970-01-01 00:00:00'; // default to start of Unix time
+        $gig_id = $_GET['gig_id'];
+
+        try {
+            $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? AND gig_id = ? LIMIT 1';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('ssi', $student, $gig_creator, $gig_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows > 0) {
+                $row = $result->fetch_assoc();
+                $chat_id = $row['id'];
+    
+                $sql = 'SELECT sender, message, sent_at FROM messages WHERE chat_id = ? AND sent_at > ? ORDER BY sent_at ASC';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('ss', $chat_id, $last_timestamp);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                $messages = [];
+    
+                while ($row = $result->fetch_assoc()) {
+                    $messages[] = $row;
+                }
+
+                $response['success'] = true;
+                $response['messages'] = $messages;
+            }
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'Couldn\'t retrieve messages';
             $response['success'] = false;
             $response['errors'] = $errors;
         } finally {

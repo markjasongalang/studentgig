@@ -20,6 +20,33 @@
     }
 ?>
 
+<!-- Chat Modal -->
+<div id="chat-modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+            <h2>Chat with the Gig Creator</h2>
+        </div>
+        <div class="modal-body">
+            <div class="message-list"></div>
+        </div>
+        <div class="modal-footer">
+            <form id="chat-form" method="POST">
+                <input name="student" id="student" type="hidden">
+                <input name="gig_creator" id="gig-creator" type="hidden">
+                <input name="gig_id" id="gig-id" type="hidden">
+
+                <!-- <textarea name="message" id="message" placeholder="Write a message..."></textarea> -->
+                <input name="message" id="message" placeholder="Write a message..." type="text">
+                <p id="message-err" class="input-help"></p>
+
+                <input name="send_message" id="send-message" type="submit" value="Send">
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Accept Invite Modal -->
 <div id="accept-invite-modal" class="modal">
     <!-- Modal content -->
@@ -537,6 +564,7 @@
                             </div>
                         `;
 
+                        // Status
                         if (gig.status === 'Invited') {
                             gigItem.querySelector('#accept-invite-btn').style.display = 'block';
 
@@ -550,6 +578,16 @@
                         } else {
                             gigItem.querySelector('#pending-preview').style.display = 'block';
                         }
+
+                        // View Chat
+                        gigItem.querySelector('#view-chat-btn').addEventListener('click', () => {
+                            chatModal.style.display = 'block';
+                            chatModal.querySelector('#gig-creator').value = gig.gig_creator;
+                            chatModal.querySelector('#student').value = username;
+                            chatModal.querySelector('#gig-id').value = gig.gig_id;
+
+                            retrieveMessagesWithGigCreator(gig.gig_creator, gig.gig_id);
+                        });
 
                         if (gig.status === 'Accepted') {
                             hiredGigs.appendChild(gigItem);
@@ -570,10 +608,23 @@
         acceptInviteModal.style.display = 'none';
     });
 
+    // ========================== CHAT MODAL ==========================
+    const chatModal = document.querySelector('#chat-modal');
+    const closeChatModalBtn = chatModal.querySelector('.close');
+
+    closeChatModalBtn.addEventListener('click', () => {
+        clearInterval(messagesInterval)
+        chatModal.style.display = 'none';
+    });
+
     // Shared
     document.addEventListener('click', (e) => {
         if (e.target === acceptInviteModal) {
             acceptInviteModal.style.display = 'none';
+        }
+        if (e.target === chatModal) {
+            clearInterval(messagesInterval)
+            chatModal.style.display = 'none';
         }
     });
 
@@ -592,7 +643,7 @@
             })
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 
                 if (data.success) {
                     acceptInviteModal.style.display = 'none';
@@ -601,6 +652,61 @@
             })
             .catch(error => console.error('Error:', error));
     });
+
+    // Chat with gig creator
+    const chatForm = document.querySelector('#chat-form');
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        fetch('./api/handle-student-profile', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                
+                if (data.success) {
+                    e.target.reset();
+                }
+
+                chatForm.querySelector('#message-err').innerHTML = data.errors?.message_err || '';
+            })
+            .catch(error => console.error('Error', error));
+    });
+
+    // Retrieve chat messages with gig creator
+    let messagesInterval;
+    let lastMessageTimestamp = '';
+
+    function retrieveMessagesWithGigCreator(gigCreator, gigId) {
+        chatModal.querySelector('.message-list').innerHTML = '';
+        lastMessageTimestamp = '';
+        messagesInterval = setInterval(() => {
+            fetch(`./api/handle-applicants?get_messages=true&last_timestamp=${lastMessageTimestamp}&gig_creator=${gigCreator}&student=${username}&gig_id=${gigId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // console.log(data);
+                    
+                    if (data.success) {
+                        data.messages.forEach(msg => {
+                            const messageElement = document.createElement('p');
+                            messageElement.classList.add('content');
+
+                            messageElement.innerHTML = `${msg.sender}: ${msg.message}`;
+                            chatModal.querySelector('.message-list').appendChild(messageElement);
+                            chatModal.querySelector('.message-list').scrollTop = chatModal.querySelector('.message-list').scrollHeight;
+                            
+                            lastMessageTimestamp = msg.sent_at;
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }, 2000);
+    }
     
     // Applied Gigs
     tabs[1]?.addEventListener('click', () => {
