@@ -20,6 +20,8 @@
     }
 ?>
 
+<input type="hidden" id="session-username" value="<?php echo $_SESSION['username']; ?>">
+
 <!-- Chat Modal -->
 <div id="chat-modal" class="modal">
     <!-- Modal content -->
@@ -598,16 +600,18 @@
                             appliedGigs.appendChild(gigItem);
                         }
 
-                        fetch(`./api/handle-student-profile?check_chat=true&student=${username}&gig_creator=${gig.gig_creator}&gig_id=${gig.gig_id}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                // console.log(data);
-                        
-                                if (data.success) {
-                                    gigItem.querySelector('#view-chat-btn').style.display = 'block';
-                                }
-                            })
-                            .catch(error => console.error('Error:', error));
+                        if (document.querySelector('#session-username').value === username) {
+                            fetch(`./api/handle-student-profile?check_chat=true&student=${username}&gig_creator=${gig.gig_creator}&gig_id=${gig.gig_id}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    // console.log(data);
+                            
+                                    if (data.success) {
+                                        gigItem.querySelector('#view-chat-btn').style.display = 'block';
+                                    }
+                                })
+                                .catch(error => console.error('Error:', error));
+                        }
                     });
                 }
             })
