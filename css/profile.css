@@ -150,7 +150,7 @@ textarea {
 
 /* ================================= Modal ================================= */
 #chat-modal {
-	padding-top: 20vh;
+	padding-top: 15vh;
 }
 
 #chat-modal .modal-footer #message {

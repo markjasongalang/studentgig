@@ -39,7 +39,7 @@
 
 /* ================================= Modal ================================= */
 #chat-modal {
-	padding-top: 20vh;
+	padding-top: 15vh;
 }
 
 #chat-modal .modal-footer #message {
@@ -61,5 +61,33 @@
 
 #chat-modal .message-list {
 	height: 300px;
+	padding-right: 10px;
 	overflow-y: auto;
+	position: relative;
+}
+
+#chat-modal .message-list p {
+	display: block;
+	width: fit-content;
+	border-radius: 60px;
+	padding: 10px 15px;
+	margin: 10px 0;
+	clear: both;
+}
+
+#chat-modal .message-list .msg-right {
+	float: right;
+	background-color: rgb(231, 242, 252);
+}
+
+#chat-modal .message-list .msg-left {
+	float: left;
+	background-color: rgb(226, 235, 241);
+}
+
+#loader {
+	position: absolute;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
 }

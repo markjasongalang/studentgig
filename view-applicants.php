@@ -15,9 +15,10 @@
     <div class="modal-content">
         <div class="modal-header">
             <span class="close">&times;</span>
-            <h2>Chat with the Applicant</h2>
+            <h2 id="applicant-full-name"></h2>
         </div>
         <div class="modal-body">
+            <div id="loader"><div class="spinner"></div></div>
             <div class="message-list"></div>
         </div>
         <div class="modal-footer">
@@ -159,6 +160,8 @@
                         // View Chat
                         applicantItem.querySelector('#view-chat-btn').addEventListener('click', () => {
                             chatModal.style.display = 'block';
+
+                            chatModal.querySelector('#applicant-full-name').innerHTML = applicant.first_name + ' ' + applicant.last_name;
                             chatModal.querySelector('#gig-creator').value = gigCreator;
                             chatModal.querySelector('#student').value = applicant.student;
                             chatModal.querySelector('#gig-id').value = gigId;
@@ -204,6 +207,7 @@
     function retrieveMessagesWithApplicant() {
         chatModal.querySelector('.message-list').innerHTML = '';
         lastMessageTimestamp = '';
+        chatModal.querySelector('#loader').style.display = 'block';
         messagesInterval = setInterval(() => {
             fetch(`./api/handle-applicants?get_messages=true&last_timestamp=${lastMessageTimestamp}&gig_creator=${gigCreator}&student=${chatModal.querySelector('#student').value}&gig_id=${gigId}`)
                 .then(response => response.json())
@@ -211,11 +215,17 @@
                     console.log(data);
                     
                     if (data.success) {
+                        chatModal.querySelector('#loader').style.display = 'none';
+
                         data.messages.forEach(msg => {
                             const messageElement = document.createElement('p');
-                            messageElement.classList.add('content');
+                            if (msg.sender === gigCreator) {
+                                messageElement.classList.add('msg-right');
+                            } else {
+                                messageElement.classList.add('msg-left');
+                            }
 
-                            messageElement.innerHTML = `${msg.sender}: ${msg.message}`;
+                            messageElement.innerHTML = msg.message;
                             chatModal.querySelector('.message-list').appendChild(messageElement);
                             chatModal.querySelector('.message-list').scrollTop = chatModal.querySelector('.message-list').scrollHeight;
                             
