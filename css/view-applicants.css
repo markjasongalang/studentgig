@@ -36,3 +36,30 @@
 	width: fit-content;
 	margin: 0 15px;
 }
+
+/* ================================= Modal ================================= */
+#chat-modal {
+	padding-top: 20vh;
+}
+
+#chat-modal .modal-footer #message {
+	min-height: 60px;
+}
+
+#chat-modal .modal-footer #send-message {
+	margin: 0;
+}
+
+#chat-modal .modal-footer #send-message:hover {
+	background-color: var(--tertiary-color);
+}
+
+#chat-modal #message-err {
+	margin: 0 0 10px 0;
+	color: var(--extra-color);
+}
+
+#chat-modal .message-list {
+	height: 300px;
+	overflow-y: auto;
+}

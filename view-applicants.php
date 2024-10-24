@@ -9,6 +9,32 @@
     }
 ?>
 
+<!-- Chat Modal -->
+<div id="chat-modal" class="modal">
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span class="close">&times;</span>
+            <h2>Chat with the Applicant</h2>
+        </div>
+        <div class="modal-body">
+            <div class="message-list"></div>
+        </div>
+        <div class="modal-footer">
+            <form id="chat-form" method="POST">
+                <input name="gig_creator" id="gig-creator" type="hidden">
+                <input name="student" id="student" type="hidden">
+
+                <!-- <textarea name="message" id="message" placeholder="Write a message..."></textarea> -->
+                <input name="message" id="message" placeholder="Write a message..." type="text">
+                <p id="message-err" class="input-help"></p>
+
+                <input name="send_message" id="send-message" type="submit" value="Send">
+            </form>
+        </div>
+    </div>
+</div>
+
 <!-- Applicant Modal -->
 <div id="applicant-modal" class="modal">
     <!-- Modal content -->
@@ -51,6 +77,7 @@
 
 <script>
     const gigId = getQueryParameter('g');
+    const gigCreator = getQueryParameter('u');
 
     // ========================== APPLICANT MODAL ==========================
     const applicantModal = document.querySelector('#applicant-modal');
@@ -60,10 +87,23 @@
         applicantModal.style.display = 'none';
     });
 
-    // Shared
+    // ========================== CHAT MODAL ==========================
+    const chatModal = document.querySelector('#chat-modal');
+    const closeChatModalBtn = chatModal.querySelector('.close');
+
+    closeChatModalBtn.addEventListener('click', () => {
+        chatModal.style.display = 'none';
+        clearInterval(messagesInterval)
+    });
+
+    // ========================== SHARED (MODALS) ==========================
     document.addEventListener('click', (e) => {
         if (e.target === applicantModal) {
             applicantModal.style.display = 'none';
+        }
+        if (e.target === chatModal) {
+            chatModal.style.display = 'none';
+            clearInterval(messagesInterval)
         }
     });
 
@@ -77,7 +117,7 @@
         fetch(`./api/handle-applicants?g=${gigId}&get_applicants=true`)
             .then(response => response.json())
             .then(data => {
-                console.log(data);
+                // console.log(data);
                 
                 if (data.success) {
                     data.applicants.forEach(applicant => {
@@ -90,8 +130,8 @@
                             </div>
                             <p>${applicant.university}</p>
                             <div>
-                                <a href="./student-profile?u=${applicant.student}" target="_blank">View</a>
-                                <button class="outline-btn" type="button">Message</button>
+                                <a href="./student-profile?u=${applicant.student}" target="_blank">See Profile</a>
+                                <button id="view-chat-btn" class="outline-btn" type="button">Chat</button>
                                 <button id="invite-to-hire-btn" type="button">Invite to Hire</button>
                                 <p id="status-preview" class="disabled-preview"></p>
                                 <p id="accepted-preview" class="disabled-preview">Student Accepted</p>
@@ -111,6 +151,14 @@
                             applicantModal.style.display = 'block';
                             applicantModal.querySelector('#gig-id').value = applicant.gig_id;
                             applicantModal.querySelector('#student').value = applicant.student;
+                        });
+
+                        applicantItem.querySelector('#view-chat-btn').addEventListener('click', () => {
+                            chatModal.style.display = 'block';
+                            chatModal.querySelector('#gig-creator').value = gigCreator;
+                            chatModal.querySelector('#student').value = applicant.student;
+
+                            retrieveMessagesWithApplicant();
                         });
 
                         applicantList.appendChild(applicantItem);
@@ -142,6 +190,61 @@
                 }
             })
             .catch(error => console.error('Error:', error));
+    });
+
+    // Retrieve chat messages with applicant
+    let messagesInterval;
+    let lastMessageTimestamp = '';
+
+    function retrieveMessagesWithApplicant() {
+        chatModal.querySelector('.message-list').innerHTML = '';
+        lastMessageTimestamp = '';
+        messagesInterval = setInterval(() => {
+            fetch(`./api/handle-applicants?get_messages=true&last_timestamp=${lastMessageTimestamp}&gig_creator=${gigCreator}&student=${chatModal.querySelector('#student').value}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    
+                    if (data.success) {
+                        data.messages.forEach(msg => {
+                            const messageElement = document.createElement('p');
+                            messageElement.classList.add('content');
+
+                            messageElement.innerHTML = `${msg.sender}: ${msg.message}`;
+                            chatModal.querySelector('.message-list').appendChild(messageElement);
+                            chatModal.querySelector('.message-list').scrollTop = chatModal.querySelector('.message-list').scrollHeight;
+                            
+                            lastMessageTimestamp = msg.sent_at;
+                        });
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }, 2000);
+    }
+
+    // Chat with applicant
+    const chatForm = document.querySelector('#chat-form');
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const formData = new FormData(e.target);
+        formData.append(e.submitter.name, true);
+
+        fetch('./api/handle-applicants', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                
+                if (data.success) {
+                    e.target.reset();
+                }
+
+                chatForm.querySelector('#message-err').innerHTML = data.errors?.message_err || '';
+            })
+            .catch(error => console.error('Error', error));
     });
 
     // GET QUERY PARAMETER
