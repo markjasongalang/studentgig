@@ -34,7 +34,7 @@
     $errors = [];
 
     // Retrieve Student Details
-    if ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($_GET['get_gigs']) && !isset($_GET['get_about_me'])) {
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_student'])) {
         try {
             $sql = 'SELECT id, email, first_name, last_name, university, year_level, degree_program, profile_image_path FROM students WHERE username = ? LIMIT 1';
             $stmt = $conn->prepare($sql);
@@ -264,9 +264,10 @@
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_gigs'])) {
         try {
-            $sql = 'SELECT a.id, a.gig_id, a.student, a.status, g.title, g.gig_type, g.gig_creator
+            $sql = 'SELECT a.id, a.gig_id, a.student, a.status, g.title, g.gig_type, g.gig_creator, gc.first_name, gc.last_name
                     FROM applicants a
                     INNER JOIN gigs g ON g.id = a.gig_id
+                    INNER JOIN gig_creators gc ON gc.username = g.gig_creator
                     WHERE a.student = ?
                     ORDER BY a.date_applied DESC';
 
@@ -399,6 +400,37 @@
             }
         } catch (mysqli_sql_exception $e) {
             $errors['db_err'] = 'Couldn\'t retrieve messages';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
+    }
+
+    // Check if there's chat from gig creator
+
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['check_chat'])) {
+        $gig_creator = $_GET['gig_creator'];
+        $student = $_GET['student'];
+        $gig_id = $_GET['gig_id'];
+
+        try {
+            $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? AND gig_id = ? LIMIT 1';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('ssi', $student, $gig_creator, $gig_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            
+            if ($result->num_rows > 0) {
+                $response['success'] = true;
+            } else {
+                $response['success'] = false;
+            }
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'Couldn\'t retrieve check if there is chat';
             $response['success'] = false;
             $response['errors'] = $errors;
         } finally {

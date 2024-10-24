@@ -19,6 +19,7 @@
         </div>
         <div class="modal-body">
             <div id="loader"><div class="spinner"></div></div>
+            <p class="chat-help">No messages yet</p>
             <div class="message-list"></div>
         </div>
         <div class="modal-footer">
@@ -212,11 +213,11 @@
             fetch(`./api/handle-applicants?get_messages=true&last_timestamp=${lastMessageTimestamp}&gig_creator=${gigCreator}&student=${chatModal.querySelector('#student').value}&gig_id=${gigId}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    // console.log(data);
+                    chatModal.querySelector('#loader').style.display = 'none';
+                    chatModal.querySelector('.chat-help').style.display = 'none';
                     
                     if (data.success) {
-                        chatModal.querySelector('#loader').style.display = 'none';
-
                         data.messages.forEach(msg => {
                             const messageElement = document.createElement('p');
                             if (msg.sender === gigCreator) {
@@ -231,6 +232,8 @@
                             
                             lastMessageTimestamp = msg.sent_at;
                         });
+                    } else {
+                        chatModal.querySelector('.chat-help').style.display = 'block';
                     }
                 })
                 .catch(error => console.error('Error:', error));

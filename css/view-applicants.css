@@ -85,7 +85,11 @@
 	background-color: rgb(226, 235, 241);
 }
 
-#loader {
+#chat-modal .chat-help {
+    display: none;
+}
+
+#loader, .chat-help {
 	position: absolute;
     top: 40%;
     left: 50%;

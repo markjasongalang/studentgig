@@ -26,9 +26,10 @@
     <div class="modal-content">
         <div class="modal-header">
             <span class="close">&times;</span>
-            <h2>Chat with the Gig Creator</h2>
+            <h2 id="gig-creator-full-name"></h2>
         </div>
         <div class="modal-body">
+            <div id="loader"><div class="spinner"></div></div>
             <div class="message-list"></div>
         </div>
         <div class="modal-footer">
@@ -201,7 +202,7 @@
     retrieveStudent();
 
     function retrieveStudent() {
-        fetch(`./api/handle-student-profile?u=${username}`)
+        fetch(`./api/handle-student-profile?u=${username}&get_student=true`)
             .then(response => response.json())
             .then(data => {
                 // console.log(data);
@@ -577,11 +578,13 @@
                             gigItem.querySelector('#accepted-preview').style.display = 'block';
                         } else {
                             gigItem.querySelector('#pending-preview').style.display = 'block';
-                        }
-
+                        }                        
+                            
                         // View Chat
                         gigItem.querySelector('#view-chat-btn').addEventListener('click', () => {
                             chatModal.style.display = 'block';
+
+                            chatModal.querySelector('#gig-creator-full-name').innerHTML = `${gig.first_name} ${gig.last_name} (Gig Creator)`;
                             chatModal.querySelector('#gig-creator').value = gig.gig_creator;
                             chatModal.querySelector('#student').value = username;
                             chatModal.querySelector('#gig-id').value = gig.gig_id;
@@ -594,6 +597,17 @@
                         } else {
                             appliedGigs.appendChild(gigItem);
                         }
+
+                        fetch(`./api/handle-student-profile?check_chat=true&student=${username}&gig_creator=${gig.gig_creator}&gig_id=${gig.gig_id}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                // console.log(data);
+                        
+                                if (data.success) {
+                                    gigItem.querySelector('#view-chat-btn').style.display = 'block';
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
                     });
                 }
             })
@@ -685,18 +699,24 @@
     function retrieveMessagesWithGigCreator(gigCreator, gigId) {
         chatModal.querySelector('.message-list').innerHTML = '';
         lastMessageTimestamp = '';
+        chatModal.querySelector('#loader').style.display = 'block';
         messagesInterval = setInterval(() => {
             fetch(`./api/handle-applicants?get_messages=true&last_timestamp=${lastMessageTimestamp}&gig_creator=${gigCreator}&student=${username}&gig_id=${gigId}`)
                 .then(response => response.json())
                 .then(data => {
                     // console.log(data);
+                    chatModal.querySelector('#loader').style.display = 'none';
                     
                     if (data.success) {
                         data.messages.forEach(msg => {
                             const messageElement = document.createElement('p');
-                            messageElement.classList.add('content');
+                            if (msg.sender === username) {
+                                messageElement.classList.add('msg-right');
+                            } else {
+                                messageElement.classList.add('msg-left');
+                            }
 
-                            messageElement.innerHTML = `${msg.sender}: ${msg.message}`;
+                            messageElement.innerHTML = msg.message;
                             chatModal.querySelector('.message-list').appendChild(messageElement);
                             chatModal.querySelector('.message-list').scrollTop = chatModal.querySelector('.message-list').scrollHeight;
                             
