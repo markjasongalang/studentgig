@@ -12,6 +12,7 @@
 <div class="container">
     <form id="post-gig-form" method="POST">
         <input type="hidden" name="username" value="<?php echo $_SESSION['username']; ?>">
+        <input type="hidden" name="free_gig_posts" id="free-gig-posts">
 
         <!-- Gig Title -->
         <h3 class="input-label">Gig Title</h3>
@@ -68,6 +69,9 @@
         <input name="address" id="address" type="text" placeholder="Enter complete address">
         <p id="address-err" class="input-help"></p>
 
+        <p class="note-text">Note: This gig post will be active for <em>10 days only.</em></p>
+        <p class="note-text" id="free-gig-posts-label"></p>
+
         <div id="loader"><div class="spinner"></div></div>
         <div id="paypal-button-container"></div>
 
@@ -79,6 +83,27 @@
 <script src="https://www.paypal.com/sdk/js?client-id=AT3eutvOWCYMAv4D0eXdTkjNxdyiyhadcYfUG9vAXxvo_Rz2uZ0MgrZKhuJfuLaqtcvDsOF1peLQV0QL&currency=PHP"></script>
 
 <script>
+    const gigCreator = '<?php echo (isset($_SESSION['username']) ? $_SESSION['username'] : ''); ?>';
+
+    // Get free gig posts
+    getFreeGigPosts();
+
+    function getFreeGigPosts() {
+        fetch(`./api/handle-post-a-gig?get_free_gig_posts=true&gig_creator=${gigCreator}`)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                
+                if (data.success) {
+                    if (data.free_gig_posts > 0) {
+                        postGigForm.querySelector('#free-gig-posts-label').innerHTML = `Free gig posts: <strong>${data.free_gig_posts}</strong>`;
+                    }
+                    postGigForm.querySelector('#free-gig-posts').value = data.free_gig_posts;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
     // Post a Gig Form
     const postGigForm = document.querySelector('#post-gig-form');
     postGigForm.addEventListener('submit', (e) => {
@@ -101,45 +126,66 @@
                 e.submitter.disabled = false;
                 
                 if (data.validate_success) {
-                    formData.append('payment_done', true);
+                    if (formData.get('free_gig_posts') > 0) { // free
+                        formData.append('free_post', true);
+                        
+                        fetch('./api/handle-post-a-gig', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                // console.log(data);
 
-                    document.querySelector('#paypal-button-container').innerHTML = '';
-
-                    paypal.Buttons({
-                        createOrder: (data, actions) => 
-                            actions.order.create({
-                                purchase_units: [{
-                                    amount: {
-                                        value: '119.25',
-                                        currency_code: 'PHP'
-                                    }
-                                }]
-                            }),
-
-                        onApprove: (data, actions) => 
-                            actions.order.capture().then(details =>
-                                fetch('./api/handle-post-a-gig', {
-                                    method: 'POST',
-                                    body: formData
-                                })
-                                .then(response => response.json())
-                                .then(data => {
-                                    // console.log(data);
-
+                                if (data.gig_post_success) {
                                     postGigForm.reset();
                                     window.location.href = './post-success';
-                                })
-                            ),
-
-                        onCancel: (data) => {
-                            alert('Payment canceled');
-                        },
-
-                        onError: (err) => {
-                            console.error(err);
-                            alert('An error occurred during the transaction');
-                        }
-                    }).render('#paypal-button-container');
+                                }
+                            })
+                            .catch(error => console.error('Error:', error));
+                    } else { // paid
+                        formData.append('pay_post', true);
+    
+                        document.querySelector('#paypal-button-container').innerHTML = '';
+    
+                        paypal.Buttons({
+                            createOrder: (data, actions) => 
+                                actions.order.create({
+                                    purchase_units: [{
+                                        amount: {
+                                            value: '119.25',
+                                            currency_code: 'PHP'
+                                        }
+                                    }]
+                                }),
+    
+                            onApprove: (data, actions) => 
+                                actions.order.capture().then(details =>
+                                    fetch('./api/handle-post-a-gig', {
+                                        method: 'POST',
+                                        body: formData
+                                    })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        // console.log(data);
+                                        
+                                        if (data.gig_post_success) {
+                                            postGigForm.reset();
+                                            window.location.href = './post-success';
+                                        }
+                                    })
+                                ),
+    
+                            onCancel: (data) => {
+                                alert('Payment canceled');
+                            },
+    
+                            onError: (err) => {
+                                console.error(err);
+                                alert('An error occurred during the transaction');
+                            }
+                        }).render('#paypal-button-container');
+                    }
                 }
 
                 postGigForm.querySelector('#gig-title-err').innerHTML = data.errors?.gig_title_err || '';

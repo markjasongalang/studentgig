@@ -273,6 +273,11 @@ input[type=file] {
     background-color: var(--tertiary-color);
 }
 
+.note-text {
+    color: #888;
+    margin: 5px;
+}
+
 /* ---------------------------- SPINNER ---------------------------- */
 #loader {
     display: none;

@@ -3,8 +3,10 @@
 
     header('Content-Type: application/json');
 
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    
     session_start();
-
+    
     function sanitize_input($data) {
         $data = trim($data);
         $data = stripslashes($data);
@@ -14,6 +16,32 @@
 
     $response = [];
     $errors = [];
+
+    // Get free gig posts
+    if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET['get_free_gig_posts'])) {
+        $gig_creator = $_GET['gig_creator'];
+
+        try {
+            $sql = 'SELECT free_gig_posts FROM gig_creators WHERE username = ? LIMIT 1';
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param('s', $gig_creator);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+
+            $response['success'] = true;
+            $response['free_gig_posts'] = $row['free_gig_posts'];
+        } catch (mysqli_sql_exception $e) {
+            $errors['db_err'] = 'Couldn\'t retrieve free gig posts';
+            $response['success'] = false;
+            $response['errors'] = $errors;
+        } finally {
+            if (isset($stmt)) {
+                $stmt->close();
+            }
+            $conn->close();
+        }
+    }
 
     // Post a Gig
     $gig_title = $duration_value = $duration_unit = $description = $skills = '';
@@ -73,12 +101,9 @@
         }
 
         if (empty($errors)) {
-            if (!isset($_POST['payment_done'])) {
-                $response['validate_success'] = true;
-            } else {
-                // Enable exceptions for mysqli
-                mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-    
+            if (isset($_POST['pay_post']) || isset($_POST['free_post'])) {
+                $conn->begin_transaction();
+
                 try {
                     $expiration = date('Y-m-d H:i:s', strtotime('+10 days'));
     
@@ -87,12 +112,22 @@
                     $stmt = $conn->prepare($sql);
                     $stmt->bind_param('ssssssssssss', $gig_title, $username, $duration_value, $duration_unit, $description, $skills, $schedule, $payment_value, $payment_unit, $gig_type, $address, $expiration);
                     $stmt->execute();
+
+                    if (isset($_POST['free_post'])) {
+                        $sql = 'UPDATE gig_creators SET free_gig_posts = free_gig_posts - 1 WHERE username = ?';
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param('s', $username);
+                        $stmt->execute();
+                    }
+
+                    $conn->commit();
     
                     $response['gig_post_success'] = true;
 
                     // For redirect
-                    $_SESSION['payment_successful'] = true;
+                    $_SESSION['post_successful'] = true;
                 } catch (mysqli_sql_exception $e) {
+                    $conn->rollback();
                     $errors['db_err'] = 'There was problem in posting a gig';
                     $response['success'] = false;
                     $response['errors'] = $errors;
@@ -102,6 +137,8 @@
                     }
                     $conn->close();
                 }
+            } else {
+                $response['validate_success'] = true;
             }
         } else {
             $response['success'] = false;
