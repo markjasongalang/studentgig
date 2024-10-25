@@ -100,6 +100,8 @@
                 <input type="hidden" id="role" value="<?php echo isset($_SESSION['role']); ?>">
                 <button id="apply-gig-btn" type="button">Apply</button>
                 <p id="applied-preview" class="disabled-preview">Applied</p>
+                <p id="expired-preview" class="disabled-preview">Gig Expired</p>
+                <p id="closed-preview" class="disabled-preview">Gig Closed</p>
             <?php } ?>
 
             <input name="update_gig" id="update-gig" type="submit" value="Update">
@@ -185,17 +187,34 @@
                     gigDetailsForm.querySelector('#address-display').innerHTML = data.gig.address || '';
                     gigDetailsForm.querySelector('#address').value = data.gig.address || '';
 
-                    if (data.gig.status === 'active' && gigDetailsForm.querySelector('#edit-btn') && gigDetailsForm.querySelector('#close-gig-btn')) {
-                        gigDetailsForm.querySelector('#edit-btn').style.display = 'block';
-                        gigDetailsForm.querySelector('#close-gig-btn').style.display = 'block';
-                    } else if (data.gig.status !== 'active') {
-                        gigNotice.innerHTML = data.gig.status === 'closed' ? 'This gig is closed.' : 'This gig has expired.';
-                        gigNotice.style.display = 'block';
+
+                    // Determine displays:
+
+                    const role = '<?php echo isset($_SESSION['role']) ? $_SESSION['role'] : 'none'; ?>';
+
+                    // Gig Creator Account
+                    if (role === 'gig creator') {
+                        if (data.gig.status === 'active' && gigDetailsForm.querySelector('#edit-btn') && gigDetailsForm.querySelector('#close-gig-btn') && !data.gig.is_expired) {
+                            gigDetailsForm.querySelector('#edit-btn').style.display = 'block';
+                            gigDetailsForm.querySelector('#close-gig-btn').style.display = 'block';
+                        } else {
+                            gigNotice.innerHTML = data.gig.status === 'closed' && !data.gig.is_expired ? 'This gig is closed.' : 'This gig has expired.';
+                            gigNotice.style.display = 'block';
+                        }
                     }
 
-                    if (data.student_applied) {
-                        gigDetailsForm.querySelector('#apply-gig-btn').style.display = 'none';
-                        gigDetailsForm.querySelector('#applied-preview').style.display = 'block';
+                    // Student Account
+                    if (role === 'student' || role === 'none') {
+                        if (data.gig.is_expired) {
+                            gigDetailsForm.querySelector('#apply-gig-btn').style.display = 'none';
+                            gigDetailsForm.querySelector('#expired-preview').style.display = 'block';
+                        } else if (data.gig.status === 'closed') {
+                            gigDetailsForm.querySelector('#apply-gig-btn').style.display = 'none';
+                            gigDetailsForm.querySelector('#closed-preview').style.display = 'block';
+                        } else if (data.student_applied) {
+                            gigDetailsForm.querySelector('#apply-gig-btn').style.display = 'none';
+                            gigDetailsForm.querySelector('#applied-preview').style.display = 'block';
+                        }
                     }
                 }
             })

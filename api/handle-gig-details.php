@@ -26,7 +26,7 @@
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
-            $sql = 'SELECT title, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address, status FROM gigs WHERE id = ? LIMIT 1';
+            $sql = 'SELECT title, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address, status, expiration FROM gigs WHERE id = ? LIMIT 1';
             $stmt = $conn->prepare($sql);
             $stmt->bind_param('s', $gig_id);
             $stmt->execute();
@@ -44,9 +44,12 @@
                     $response['student_applied'] = true;
                 }
             }
-
+            
             $response['success'] = true;
             $response['gig'] = $row;
+
+            $current_time = date('Y-m-d H:i:s');
+            $response['gig']['is_expired'] = ($row['expiration'] <= $current_time ? true : false);
         } catch (mysqli_sql_exception $e) {
             $errors['db_err'] = 'There was problem in retrieving gig details';
             $response['success'] = false;

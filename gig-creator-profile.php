@@ -312,7 +312,7 @@
                             <i class="ri-arrow-right-line"></i>
                         `;
 
-                        if (gig.status === 'active') {
+                        if (gig.status === 'active' && !gig.is_expired) {
                             activeGigs.appendChild(gigItem);
                         } else {
                             closedGigs.appendChild(gigItem);

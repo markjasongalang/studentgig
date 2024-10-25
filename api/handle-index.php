@@ -20,11 +20,14 @@
         mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
         try {
-            $sql = "SELECT id, title, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address, status FROM gigs WHERE status = 'active' AND title LIKE ? ORDER BY date_posted DESC";
+            
+            $sql = "SELECT id, title, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address, status FROM gigs WHERE status = 'active' AND title LIKE ? AND expiration > ? ORDER BY date_posted DESC";
             $stmt = $conn->prepare($sql);
-
+            
             $search_query = '%' . $search_query . '%';
-            $stmt->bind_param('s', $search_query);
+            $current_time = date('Y-m-d H:i:s'); // Get the current timestamp
+            
+            $stmt->bind_param('ss', $search_query, $current_time);
 
             $stmt->execute();
             $result = $stmt->get_result();

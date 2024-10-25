@@ -45,6 +45,11 @@ select.show {
     display: none;
 }
 
+#gig-details-form #expired-preview,
+#gig-details-form #closed-preview {
+    background-color: rgb(175, 175, 175);
+}
+
 .side {
     flex-basis: 30%;
     text-align: center;
