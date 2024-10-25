@@ -39,7 +39,7 @@
         <p id="skills-err" class="input-help"></p>
 
         <!-- Schedule/Time Commitment -->
-        <h3 class="input-label">Schedule/Time Commitment</h3>
+        <h3 class="input-label">Schedule/Time Commitment of Student</h3>
         <textarea name="schedule" placeholder="Examples:
 1) 9:00 PM to 11:30 PM (Mon, Wed, Fri)
 2) Flexible Schedule (work on your own time)
@@ -69,9 +69,14 @@
         <p id="address-err" class="input-help"></p>
 
         <div id="loader"><div class="spinner"></div></div>
+        <div id="paypal-button-container"></div>
+
         <input name="post_gig" type="submit" value="Post Gig">
     </form>
 </div>
+
+<!-- PayPal JavaScript SDK (with peso currency) -->
+<script src="https://www.paypal.com/sdk/js?client-id=AT3eutvOWCYMAv4D0eXdTkjNxdyiyhadcYfUG9vAXxvo_Rz2uZ0MgrZKhuJfuLaqtcvDsOF1peLQV0QL&currency=PHP"></script>
 
 <script>
     // Post a Gig Form
@@ -95,9 +100,46 @@
                 postGigForm.querySelector('#loader').style.display = 'none';
                 e.submitter.disabled = false;
                 
-                if (data.success) {
-                    postGigForm.reset();
-                    window.location.href = './';
+                if (data.validate_success) {
+                    formData.append('payment_done', true);
+
+                    document.querySelector('#paypal-button-container').innerHTML = '';
+
+                    paypal.Buttons({
+                        createOrder: (data, actions) => 
+                            actions.order.create({
+                                purchase_units: [{
+                                    amount: {
+                                        value: '119.25',
+                                        currency_code: 'PHP'
+                                    }
+                                }]
+                            }),
+
+                        onApprove: (data, actions) => 
+                            actions.order.capture().then(details =>
+                                fetch('./api/handle-post-a-gig', {
+                                    method: 'POST',
+                                    body: formData
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    // console.log(data);
+
+                                    postGigForm.reset();
+                                    window.location.href = './post-success';
+                                })
+                            ),
+
+                        onCancel: (data) => {
+                            alert('Payment canceled');
+                        },
+
+                        onError: (err) => {
+                            console.error(err);
+                            alert('An error occurred during the transaction');
+                        }
+                    }).render('#paypal-button-container');
                 }
 
                 postGigForm.querySelector('#gig-title-err').innerHTML = data.errors?.gig_title_err || '';

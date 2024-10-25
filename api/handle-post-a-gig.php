@@ -3,6 +3,8 @@
 
     header('Content-Type: application/json');
 
+    session_start();
+
     function sanitize_input($data) {
         $data = trim($data);
         $data = stripslashes($data);
@@ -71,28 +73,35 @@
         }
 
         if (empty($errors)) {
-            // Enable exceptions for mysqli
-            mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+            if (!isset($_POST['payment_done'])) {
+                $response['validate_success'] = true;
+            } else {
+                // Enable exceptions for mysqli
+                mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    
+                try {
+                    $expiration = date('Y-m-d H:i:s', strtotime('+10 days'));
+    
+                    $sql = 'INSERT INTO gigs (title, gig_creator, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address, expiration)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param('ssssssssssss', $gig_title, $username, $duration_value, $duration_unit, $description, $skills, $schedule, $payment_value, $payment_unit, $gig_type, $address, $expiration);
+                    $stmt->execute();
+    
+                    $response['gig_post_success'] = true;
 
-            try {
-                $expiration = date('Y-m-d H:i:s', strtotime('+10 days'));
-
-                $sql = 'INSERT INTO gigs (title, gig_creator, duration_value, duration_unit, description, skills, schedule, payment_amount, payment_unit, gig_type, address, expiration)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-                $stmt = $conn->prepare($sql);
-                $stmt->bind_param('ssssssssssss', $gig_title, $username, $duration_value, $duration_unit, $description, $skills, $schedule, $payment_value, $payment_unit, $gig_type, $address, $expiration);
-                $stmt->execute();
-
-                $response['success'] = true;
-            } catch (mysqli_sql_exception $e) {
-                $errors['db_err'] = 'There was problem in posting a gig';
-                $response['success'] = false;
-                $response['errors'] = $errors;
-            } finally {
-                if ($stmt) {
-                    $stmt->close();
+                    // For redirect
+                    $_SESSION['payment_successful'] = true;
+                } catch (mysqli_sql_exception $e) {
+                    $errors['db_err'] = 'There was problem in posting a gig';
+                    $response['success'] = false;
+                    $response['errors'] = $errors;
+                } finally {
+                    if ($stmt) {
+                        $stmt->close();
+                    }
+                    $conn->close();
                 }
-                $conn->close();
             }
         } else {
             $response['success'] = false;
