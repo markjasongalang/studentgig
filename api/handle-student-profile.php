@@ -334,32 +334,48 @@
         }
 
         if (empty($errors)) {
-            // Find and/or create chat record
-            $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? AND gig_id = ? LIMIT 1';
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('ssi', $student, $gig_creator, $gig_id);
-            $stmt->execute();
-            
-            $result = $stmt->get_result();
+            $conn->begin_transaction();
 
-            if ($result->num_rows == 0) {
-                $chat_id = generate_uuid();
-                $sql = 'INSERT INTO chats (id, student, gig_creator, gig_id) VALUES (?, ?, ?, ?)';
+            try {
+                // Find and/or create chat record
+                $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? AND gig_id = ? LIMIT 1';
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param('sssi', $chat_id, $student, $gig_creator, $gig_id);
+                $stmt->bind_param('ssi', $student, $gig_creator, $gig_id);
                 $stmt->execute();
-            } else {
-                $row = $result->fetch_assoc();
-                $chat_id = $row['id'];
-            }
+                
+                $result = $stmt->get_result();
 
-            // Send message
-            $sql = 'INSERT INTO messages (chat_id, sender, message) VALUES (?, ?, ?)';
-            $stmt = $conn->prepare($sql);
-            $stmt->bind_param('sss', $chat_id, $student, $message);
-            $stmt->execute();
-            
-            $response['success'] = true;
+                if ($result->num_rows == 0) {
+                    $chat_id = generate_uuid();
+                    $sql = 'INSERT INTO chats (id, student, gig_creator, gig_id) VALUES (?, ?, ?, ?)';
+                    $stmt = $conn->prepare($sql);
+                    $stmt->bind_param('sssi', $chat_id, $student, $gig_creator, $gig_id);
+                    $stmt->execute();
+                } else {
+                    $row = $result->fetch_assoc();
+                    $chat_id = $row['id'];
+                }
+
+                // Send message
+                $sql = 'INSERT INTO messages (chat_id, sender, message) VALUES (?, ?, ?)';
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param('sss', $chat_id, $student, $message);
+                $stmt->execute();
+
+                $conn->commit();
+                
+                $response['success'] = true;
+            } catch (mysqli_sql_exception $e) {
+                $conn->rollback();
+                $errors['db_err'] = 'Couldn\'t send message';
+                $response['success'] = false;
+                $response['errors'] = $errors;
+            } finally {
+                if (isset($stmt)) {
+                    $stmt->close();
+                }
+                $conn->close();
+            }
         } else {
             $response['success'] = false;
             $response['errors'] = $errors;

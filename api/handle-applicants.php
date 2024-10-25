@@ -106,6 +106,8 @@
         }
 
         if (empty($errors)) {
+            $conn->begin_transaction();
+
             try {
                 // Find and/or create chat record
                 $sql = 'SELECT id FROM chats WHERE student = ? AND gig_creator = ? AND gig_id = ? LIMIT 1';
@@ -131,9 +133,12 @@
                 $stmt = $conn->prepare($sql);
                 $stmt->bind_param('sss', $chat_id, $gig_creator, $message);
                 $stmt->execute();
+
+                $conn->commit();
                 
                 $response['success'] = true;
             } catch (mysqli_sql_exception $e) {
+                $conn->rollback();
                 $errors['db_err'] = 'Couldn\'t process chat or messages';
                 $response['success'] = false;
                 $response['errors'] = $errors;

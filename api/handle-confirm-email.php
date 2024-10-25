@@ -79,6 +79,8 @@
             // Enable exceptions for mysqli
             mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
+            $conn->begin_transaction();
+
             try {
                 // verification_codes table
                 $sql = 'UPDATE verification_codes SET is_verified = 1, expires_at = ? WHERE email = ? AND code = ?';
@@ -105,7 +107,10 @@
                     $stmt->bind_param('ssssssssss', $gig_creator_id, $username, $email, $first_name, $last_name, $company, $valid_id_image_path, $birthdate, $terms, $password);
                     $stmt->execute();
                 }
+
+                $conn->commit();
             } catch (mysqli_sql_exception $e) {
+                $conn->rollback();
                 $errors['verif_code_err'] = 'There was problem in creating your account. Please try again later';
                 $response['success'] = false;
                 $response['errors'] = $errors;
