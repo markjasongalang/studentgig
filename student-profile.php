@@ -553,11 +553,9 @@
                         gigItem.classList.add('gig-item');
                         
                         gigItem.innerHTML = `
-                            <h3 class="gig-title">${gig.title}</h3>
-                            <div class="with-actions">
-                                <a href="./gig-details?g=${gig.gig_id}">Details</a>
-                            </div>
-                            <div>
+                            <h3 class="gig-title">${truncateString(gig.title, 35)}</h3>
+                            <a class="gig-details" href="./gig-details?g=${gig.gig_id}">Details</a>
+                            <div class="multiple-states">
                                 <p id="pending-preview" class="disabled-preview">Pending</p>
                                 <button id="accept-invite-btn">Accept Invite</button>
                                 <p id="accepted-preview" class="disabled-preview">Accepted</p>
@@ -762,6 +760,14 @@
     function getQueryParameter(name) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(name);
+    }
+
+    // TRUNCATE STRING
+    function truncateString(str, maxLength) {
+        if (str.length > maxLength) {
+            return str.slice(0, maxLength) + "...";
+        }
+        return str;
     }
 </script>
 
