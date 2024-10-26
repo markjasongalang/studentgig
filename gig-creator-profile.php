@@ -123,7 +123,7 @@
                 if (data.success) {
                     changePhotoForm.querySelector('#gig-creator-id').value = data.gig_creator.id;
 
-                    document.querySelector('#profile-image').src = data.gig_creator.profile_image_path.slice(1) || './images/profile-image.png';
+                    document.querySelector('#profile-image').src = data.gig_creator.profile_image_path?.slice(1) || './images/profile-image.png';
                     changePhotoForm.querySelector('#current-profile-image-path').value = data.gig_creator.profile_image_path || '';
                     
                     editProfileForm.querySelector('#gig-creator-name').innerHTML = data.gig_creator.first_name + ' ' + data.gig_creator.last_name;
