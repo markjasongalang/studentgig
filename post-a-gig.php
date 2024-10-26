@@ -80,7 +80,7 @@
 </div>
 
 <!-- PayPal JavaScript SDK (with peso currency) -->
-<script src="https://www.paypal.com/sdk/js?client-id=AT3eutvOWCYMAv4D0eXdTkjNxdyiyhadcYfUG9vAXxvo_Rz2uZ0MgrZKhuJfuLaqtcvDsOF1peLQV0QL&currency=PHP"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=AaHLDuzrFXUGy7QbSj-f8gHnvUvhoCohg0rcB-7O7yZBlOdiGPQ4mxEaC4q368Ubw1NQDx79cc1Z2W0Q&currency=PHP"></script>
 
 <script>
     const gigCreator = '<?php echo (isset($_SESSION['username']) ? $_SESSION['username'] : ''); ?>';
