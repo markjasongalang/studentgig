@@ -96,6 +96,7 @@
 
     closeChatModalBtn.addEventListener('click', () => {
         chatModal.style.display = 'none';
+        chatModal.querySelector('.chat-help').style.display = 'none';
         clearInterval(messagesInterval)
     });
 
@@ -106,6 +107,7 @@
         }
         if (e.target === chatModal) {
             chatModal.style.display = 'none';
+            chatModal.querySelector('.chat-help').style.display = 'none';
             clearInterval(messagesInterval)
         }
     });
