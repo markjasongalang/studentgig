@@ -10,7 +10,7 @@
 	margin-bottom: 15px;
 }
 
-.applicant-item * {
+.applicant-item > * {
 	flex: 1;
 }
 
@@ -18,23 +18,40 @@
 	border: none;
 }
 
-.applicant-item a {
-	display: inline-block;
-	color: var(--secondary-color);
+.applicant-item .applicant-name {
+	color: var(--primary-color);
+	flex: 2;
+}
+
+.applicant-item .university {
+	text-align: center;
+}
+
+.applicant-item .student-profile {
+	text-align: center;
 }
 
 .applicant-item button {
-	width: auto;
-	margin: 0 0 0 20px;
+	margin: 0;
 }
 
-.applicant-item .applicant-name {
-	color: var(--primary-color);
+.applicant-item #view-chat-btn {
+	flex: 0;
+	width: auto;
+}
+
+.applicant-item .multiple-states {
+	text-align: center;
+	padding: 0 20px;
+}
+
+.applicant-item .multiple-states button {
+	width: auto;
 }
 
 .disabled-preview {
 	width: fit-content;
-	margin: 0 15px;
+	margin: 0;
 }
 
 /* ================================= Modal ================================= */
@@ -60,7 +77,7 @@
 }
 
 #chat-modal .message-list {
-	height: 300px;
+	height: 400px;
 	padding-right: 10px;
 	overflow-y: auto;
 	position: relative;
@@ -69,19 +86,22 @@
 #chat-modal .message-list p {
 	display: block;
 	width: fit-content;
-	border-radius: 60px;
+	border-radius: 20px;
 	padding: 10px 15px;
 	margin: 10px 0;
 	clear: both;
+	text-align: left;
 }
 
 #chat-modal .message-list .msg-right {
 	float: right;
+	margin-left: 20%;
 	background-color: rgb(231, 242, 252);
 }
 
 #chat-modal .message-list .msg-left {
 	float: left;
+	margin-right: 20%;
 	background-color: rgb(226, 235, 241);
 }
 
@@ -94,4 +114,29 @@
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+/* ===================== Responsive ===================== */
+@media only screen and (max-width: 1075px) {
+    .container {
+        width: 85%;
+    }
+
+	.applicant-item {
+		flex-direction: column;
+	}
+
+	.applicant-item #view-chat-btn {
+		margin-top: 10px !important;
+	}
+
+	.applicant-item * {
+		margin-top: 10px;
+	}
+}
+
+@media only screen and (max-width: 645px) {
+    .container {
+        width: 93%;
+    }
 }

@@ -2,12 +2,12 @@
     $title = 'Post Success';
     include './partials/header.php';
 
-    if (isset($_SESSION['post_successful'])) {
-        unset($_SESSION['post_successful']);
-    } else {
-        header('Location: ./');
-        exit;
-    }
+    // if (isset($_SESSION['post_successful'])) {
+    //     unset($_SESSION['post_successful']);
+    // } else {
+    //     header('Location: ./');
+    //     exit;
+    // }
 ?>
 
 <div class="container">

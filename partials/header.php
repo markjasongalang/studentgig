@@ -55,4 +55,6 @@
                     </li>
                 <?php } ?>                    
             </ul>
+            
+            <li id="mobile-toggle"><i class="ri-menu-line"></i></li>
         </nav>

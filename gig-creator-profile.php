@@ -232,6 +232,10 @@
                 input.style.display = 'none';
             });
 
+            editProfileForm.querySelectorAll('.input-help').forEach(inputHelp => {
+                inputHelp.innerHTML = '';
+            });
+
             retrieveGigCreator();
             
             editProfileBtn.innerHTML = 'Edit profile';
@@ -299,7 +303,7 @@
                         gigItem.classList.add('gig-item');
                         
                         gigItem.innerHTML = `
-                            <h3 class="gig-title">${gig.title}</h3>
+                            <h3 class="gig-title">${truncateString(gig.title, 35)}</h3>
                             <p class="gig-type">${gig.gig_type}</p>
                             <div>
                                 <p>Payment</p>
@@ -363,6 +367,14 @@
             return 'Invalid amount'; // Handle invalid numbers
         }
         return numericAmount.toLocaleString('en-PH');
+    }
+
+    // ========================== TRUNCATE STRING ==========================
+    function truncateString(str, maxLength) {
+        if (str.length > maxLength) {
+            return str.slice(0, maxLength) + "...";
+        }
+        return str;
     }
 </script>
 

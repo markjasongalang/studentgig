@@ -128,13 +128,11 @@
                         applicantItem.classList.add('applicant-item');
 
                         applicantItem.innerHTML = `
-                            <div>
-                                <h3 class="applicant-name">${applicant.first_name} ${applicant.last_name}</h3>
-                            </div>
-                            <p>${applicant.university}</p>
-                            <div>
-                                <a href="./student-profile?u=${applicant.student}" target="_blank">See Profile</a>
-                                <button id="view-chat-btn" class="outline-btn" type="button">Chat</button>
+                            <h3 class="applicant-name">${applicant.first_name} ${applicant.last_name}</h3>
+                            <p class="university">${applicant.university}</p>
+                            <a class="student-profile" href="./student-profile?u=${applicant.student}" target="_blank">See Profile</a>
+                            <button id="view-chat-btn" class="outline-btn" type="button">Chat</button>
+                            <div class="multiple-states">
                                 <button id="invite-to-hire-btn" type="button">Invite to Hire</button>
                                 <p id="status-preview" class="disabled-preview"></p>
                                 <p id="accepted-preview" class="disabled-preview">Student Accepted</p>

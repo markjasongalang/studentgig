@@ -24,3 +24,24 @@
 #change-email-form {
     display: none;
 }
+
+/* ===================== Responsive ===================== */
+@media only screen and (max-width: 985px) {
+    .container {
+        width: 85%;
+    }
+
+    .container h1 {
+        font-size: 27px;
+    }
+}
+
+@media only screen and (max-width: 645px) {
+    .container {
+        width: 93%;
+    }
+
+    .container h1 {
+        font-size: 25px;
+    }
+}

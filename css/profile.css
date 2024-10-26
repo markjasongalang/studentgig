@@ -5,7 +5,7 @@
 
 .left {
     flex-basis: 30%;
-    padding: 0 20px;
+    padding: 0 20px 15px 20px;
     text-align: center;
 }
 
@@ -15,6 +15,8 @@
     border: 1px solid var(--special-gray);
     border-radius: 100%;
     object-fit: cover;
+    display: block;
+    margin: 0 auto 15px auto;
 }
 
 .left #change-photo-form {
@@ -55,8 +57,8 @@
 
 .top-nav li {
     display: inline-block;
-    margin-right: 40px;
-    padding: 0 10px 20px 10px;
+    margin-right: 20px;
+    padding: 20px 10px;
     cursor: pointer;
 }
 
@@ -88,12 +90,12 @@ textarea {
     padding: 20px 0;
 }
 
-/* .gig-item * {
-    flex: 1;
-} */
-
 .gig-item:hover {
     border: none;
+}
+
+.gig-item h3 {
+    flex: 2;
 }
 
 .gig-item button,
@@ -171,7 +173,7 @@ textarea {
 }
 
 #chat-modal .message-list {
-	height: 300px;
+	height: 400px;
 	padding-right: 10px;
 	overflow-y: auto;
 	position: relative;
@@ -180,19 +182,22 @@ textarea {
 #chat-modal .message-list p {
 	display: block;
 	width: fit-content;
-	border-radius: 60px;
+	border-radius: 20px;
 	padding: 10px 15px;
 	margin: 10px 0;
 	clear: both;
+    text-align: left;
 }
 
 #chat-modal .message-list .msg-right {
 	float: right;
+    margin-left: 20%;
 	background-color: rgb(231, 242, 252);
 }
 
 #chat-modal .message-list .msg-left {
 	float: left;
+    margin-right: 20%;
 	background-color: rgb(226, 235, 241);
 }
 
@@ -202,4 +207,56 @@ textarea {
     top: 40%;
     left: 50%;
     transform: translate(-50%, -50%);
+}
+
+/* ===================== Responsive ===================== */
+@media only screen and (max-width: 1075px) {
+    .container {
+        width: 85%;
+    }
+}
+
+@media only screen and (max-width: 970px) {
+    .container {
+        flex-direction: column;        
+    }
+
+    .top-nav {
+        text-align: center;
+    }
+    
+    .top-nav li {
+        margin: 0 10px;
+    }
+}
+
+@media only screen and (max-width: 645px) {
+    .container {
+        width: 93%;
+    }
+
+    .main .top-nav {
+        white-space: nowrap;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .main .top-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .gig-item {
+        flex-direction: column;
+        border-radius: 20px;
+    }
+
+    .gig-item > * {
+        margin-top: 15px;
+    }
+
+    .gig-item h3 {
+        margin-top: 0;
+    }
 }

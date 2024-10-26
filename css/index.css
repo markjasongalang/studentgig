@@ -42,3 +42,41 @@
 .gig-list {
     margin: 20px 0;
 }
+
+.gig-item h3 {
+    flex: 2;
+}
+
+/* ===================== Responsive ===================== */
+@media only screen and (max-width: 985px) {
+    .container {
+        width: 85%;
+    }
+
+    .tagline {
+        font-size: 30px;
+    }
+}
+
+@media only screen and (max-width: 645px) {
+    .container {
+        width: 93%;
+    }
+
+    .tagline {
+        font-size: 25px;
+    }
+
+    .gig-item {
+        flex-direction: column;
+        border-radius: 20px;
+    }
+
+    .gig-item > * {
+        margin-top: 15px;
+    }
+
+    .gig-item h3 {
+        margin-top: 0;
+    }
+}

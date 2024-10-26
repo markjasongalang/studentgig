@@ -18,3 +18,10 @@ backBtns.forEach(backBtn => {
         window.history.back();
     });
 });
+
+// Mobile Menu
+const mobileToggle = document.querySelector('#mobile-toggle');
+const websiteMenu = document.querySelector('nav ul');
+mobileToggle.addEventListener('click', () => {
+    websiteMenu.classList.toggle('show');
+});

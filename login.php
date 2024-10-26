@@ -1,5 +1,6 @@
 <?php
     $title = 'Login';
+    $css_file_name = 'auth';
     include './partials/header.php';
 
     if (isset($_SESSION['username']) && isset($_SESSION['role'])) {

@@ -51,6 +51,7 @@ a {
 }
 
 nav {
+    position: relative; /* for responsive */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -395,7 +396,7 @@ input[type=file] {
 }
 
 .modal-body {
-    padding: 10px 16px;
+    padding: 1px 16px;
     text-align: center;
 }
 
@@ -409,4 +410,61 @@ input[type=file] {
     color: white;
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
+}
+
+/* ===================== Responsive ===================== */
+nav #mobile-toggle {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+    font-size: 20px;
+    color: var(--primary-color);
+    margin: 28px 20px;
+}
+
+@media only screen and (max-width: 970px) {
+    .container, .modal-content {
+        width: 85%;
+    }
+}
+
+@media only screen and (max-width: 645px) {
+    .container, .modal-content {
+        width: 93%;
+    }
+}
+
+@media only screen and (max-width: 530px) {
+    nav {
+        flex-direction: column;
+    }
+
+    nav li {
+        display: block;
+        text-align: center;
+        margin: 20px 0 0 0;
+    }
+
+    nav #mobile-toggle {
+        display: block;
+    }
+
+    nav ul {
+        display: none;
+    }
+
+    nav ul.show {
+        display: block;
+    }
+
+    .modal {
+        padding-top: 6vh !important;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .modal {
+        padding-top: 10px !important;
+    }
 }

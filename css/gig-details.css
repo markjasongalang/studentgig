@@ -80,3 +80,28 @@ select.show {
     display: none;
     margin: 15px 0;
 }
+
+/* ===================== Responsive ===================== */
+@media only screen and (max-width: 1075px) {
+    .container {
+        width: 85%;
+    }
+    
+    .inner {
+        flex-direction: column;
+    }
+
+    .main {
+        padding-right: 0;
+    }
+}
+
+@media only screen and (max-width: 645px) {
+    .container {
+        width: 93%;
+    }
+
+    .inner #gig-title-display {
+        font-size: 27px;
+    }
+}
