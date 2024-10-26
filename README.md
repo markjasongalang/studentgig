@@ -14,4 +14,4 @@ With diverse job options, including remote, onsite, and hybrid roles, StudentGig
 
 ## Creator/Founder
 **Mark Jason T. Galang**  
-A dedicated advocate for student empowerment, I'm passionate about creating opportunities for students to gain real-world experience through flexible, accessible work options.
+I'm passionate about helping college students support themselves through their education, recognizing that college can be expensive. My goal is to create opportunities that allow students to gain valuable work experience while earning income through flexible gig options.
