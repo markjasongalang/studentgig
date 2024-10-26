@@ -76,6 +76,10 @@
         margin-top: 15px;
     }
 
+    .gig-item .gig-title {
+        text-align: center;
+    }
+
     .gig-item h3 {
         margin-top: 0;
     }
