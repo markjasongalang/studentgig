@@ -509,14 +509,14 @@
                 if (data.success) {
                     // Skills
                     aboutMeForm.querySelector('#student-skills').innerHTML = data.about_me.skills;
-                    aboutMeForm.querySelector('#skills').value = data.about_me.skills;
+                    aboutMeForm.querySelector('#skills').innerHTML = data.about_me.skills;
                     autoResizeTextarea(aboutMeForm.querySelector('#skills'));
 
                     // Work Experience
                     if (data.about_me.work_exp) {
                         aboutMeForm.querySelector('#work-exp-label').style.display = 'block';
                         aboutMeForm.querySelector('#student-work-exp').innerHTML = data.about_me.work_exp;
-                        aboutMeForm.querySelector('#work-exp').value = data.about_me.work_exp;
+                        aboutMeForm.querySelector('#work-exp').innerHTML = data.about_me.work_exp;
                     } else {
                         aboutMeForm.querySelector('#work-exp-label').style.display = 'none';
                         aboutMeForm.querySelector('#student-work-exp').innerHTML = '';
@@ -526,7 +526,7 @@
                     if (data.about_me.certifications) {
                         aboutMeForm.querySelector('#certs-label').style.display = 'block';
                         aboutMeForm.querySelector('#student-certs').innerHTML = data.about_me.certifications;
-                        aboutMeForm.querySelector('#certs').value = data.about_me.certifications;
+                        aboutMeForm.querySelector('#certs').innerHTML = data.about_me.certifications;
                     } else {
                         aboutMeForm.querySelector('#certs-label').style.display = 'none';
                         aboutMeForm.querySelector('#student-certs').innerHTML = '';
