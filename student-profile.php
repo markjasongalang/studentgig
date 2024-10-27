@@ -102,7 +102,7 @@
             <h2 id="student-full-name" class="displayed"></h2>
 
             <!-- Email -->
-            <h3 class="input-label">Email</h3>
+            <!-- <h3 class="input-label">Email</h3> -->
             <input name="email" id="email" type="email" placeholder="Enter email">
             <p id="email-err" class="input-help"></p>
             <p id="student-email" class="displayed"></p>
@@ -316,7 +316,9 @@
                 inputLabel.style.display = 'block';
             });
             document.querySelectorAll('.left #edit-profile-form input').forEach(input => {
-                input.style.display = 'block';
+                if (input.getAttribute('id') !== 'email') {
+                    input.style.display = 'block';
+                }
             });
             document.querySelectorAll('.displayed').forEach(displayed => {
                 displayed.style.display = 'none';
