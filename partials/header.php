@@ -17,6 +17,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>StudentGig - <?php echo $title; ?></title>
 
+        <!-- Website Icon -->
+        <link rel="icon" href="./images/studentgig-icon.png">
+
         <!-- External CSS -->
         <link rel="stylesheet" href="./css/style.css">
         <?php if (isset($css_file_name)) { ?>
