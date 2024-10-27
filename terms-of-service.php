@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Terms of Service - StudentGig</title>
 
+        <!-- Website Icon -->
+        <link rel="icon" href="./images/studentgig-icon.png">
+
         <style>
             @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
 
