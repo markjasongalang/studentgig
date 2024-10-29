@@ -12,6 +12,37 @@ With diverse job options, including remote, onsite, and hybrid roles, StudentGig
 - **Payment Integration:** PayPal
 - **Hosting:** Hostinger
 
+## Screenshots
+### Home
+<img src="screenshots/home.PNG" alt="home page">
+
+### Gig Details
+<img src="screenshots/gig-details.PNG" alt="gig details">
+
+### Student Profile
+<img src="screenshots/student-profile.PNG" alt="student profile">
+
+### Applied Gigs
+<img src="screenshots/applied-gigs.PNG" alt="applied gigs">
+
+### Gig Creator Profile
+<img src="screenshots/gig-creator-profile.PNG" alt="gig creator profile">
+
+### Post a Gig
+<img src="screenshots/post-gig.PNG" alt="post a gig">
+
+### View Applicants
+<img src="screenshots/view-applicants.PNG" alt="view applicants">
+
+### Chat
+<img src="screenshots/chat.PNG" alt="chat">
+
+### Login
+<img src="screenshots/login.PNG" alt="login">
+
+### Signup
+<img src="screenshots/signup.PNG" alt="signup">
+
 ## Creator/Founder
 **Mark Jason T. Galang**  
 I'm passionate about helping college students support themselves through their education, recognizing that college can be expensive. My goal is to create opportunities that allow students to gain valuable work experience while earning income through flexible gig options.
